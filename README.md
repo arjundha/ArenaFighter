@@ -1,11 +1,14 @@
-# My Personal Project
+# Fighting Tournament 
 
-## A subtitle
+## What is "Fighting Tournament"?
+Fighting Tournament is a game developed in Java which sees players create their own custom character
+who will fight battle after battle in order to become champion of the tournament. Players will be able
+to choose their character's:
 
-A *bulleted* list:
-- item 1
-- item 2
-- item 3
+- Name
+- Race (Human, dwarf or elf)
+- Class (Warrior, rouge or mage)
 
-An example of text with **bold** and *italic* fonts.  Note that the IntelliJ markdown previewer doesn't seem to render 
-the bold and italic fonts correctly but they will appear correctly on GitHub.
+As an avid fan of video games and D&D, I chose to create a game that would implement features 
+from D&D to create fun gameplay for anyone to enjoy.
+
