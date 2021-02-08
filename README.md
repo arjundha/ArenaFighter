@@ -20,7 +20,7 @@ being implemented. The stories implemented in each stage can be seen as follows:
 User Story | Phase Completed 
 --- | --- 
 As a user, I want to be able to add weapons to my inventory | --- 
-As a user, I want to be able to add potions to my inventory | ---
+As a user, I want to be able to buy potions to restore my health| ---
 As a user, I want to be able to create a character | ---
 As a user, I want to be able to choose whether to fight or shop | ---
 As a user, I want to be able to shop | ---
