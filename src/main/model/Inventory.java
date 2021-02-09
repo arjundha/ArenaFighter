@@ -28,6 +28,7 @@ public class Inventory {
         this.equipment.remove(index);
     }
 
+    // EFFECTS: produce a list of all the current stat modifiers from equipment in an inventory
     public List<Integer> getModifierTotals() {
         int strength = 0;
         int endurance = 0;
