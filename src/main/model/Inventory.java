@@ -19,6 +19,12 @@ public class Inventory {
         this.equipment = new ArrayList<>();
     }
 
+    // REQUIRES: 0 <= index < this.equipment.size()
+    // EFFECTS: produce a specific equipment at a specified index
+    public Equipment getEquipment(int index) {
+        return this.equipment.get(index);
+    }
+
     // REQUIRES: worth > 0
     // MODIFIES: this
     // EFFECTS: adds a new equipment to the inventory of equipment
@@ -52,11 +58,7 @@ public class Inventory {
 
     }
 
-    // REQUIRES: 0 <= index < this.equipment.size()
-    // EFFECTS: produce a specific equipment at a specified index
-    public Equipment getEquipment(int index) {
-        return this.equipment.get(index);
-    }
+
 
 
 }
