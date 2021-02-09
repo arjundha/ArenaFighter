@@ -1,5 +1,17 @@
 package model;
 
+/**
+ * The Equipment class is a representation of items that can bought and used by a
+ * player to modify their stats. Each equipment has a name, and values for their strength,
+ * endurance, dexterity, and speed modification values. These items also have a value
+ * that represents how much they cost, this value being worth.
+ *
+ * The modifier values of these equipment items will be added to the stats of a Character object if they are in
+ * their inventory.
+ *
+ * @author Arjun
+ */
+
 // Represents equipment that can be bought and used by a player to modify their stats
 public class Equipment {
     private String name;  // The name of a weapon
