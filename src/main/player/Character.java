@@ -47,50 +47,62 @@ public class Character {
         }
     }
 
+    // EFFECTS: Produce the name of a character
     public String getName() {
         return this.name;
     }
 
+    // EFFECTS: Produce the race of a character
     public String getRace() {
         return this.race;
     }
 
+    // EFFECTS: Produce the name of a character
     public String getClassName() {
         return this.className;
     }
 
+    // EFFECTS: Produce the current level of a character
     public int getLevel() {
         return this.level;
     }
 
+    // EFFECTS: Produce the current hp of a character
     public int getCurrentHealth() {
         return this.hitpoints.get(0);
     }
 
+    // EFFECTS: Produce the max possible hp of a character
     public int getMaxHealth() {
         return this.hitpoints.get(1);
     }
 
+    // EFFECTS: Produce the total strength of a character, including equipment modifiers
     public int getStrength() {
         return this.strength + this.inventory.getTotalStrength();
     }
 
+    // EFFECTS: Produce the total endurance of a character, including equipment modifiers
     public int getEndurance() {
         return this.endurance + this.inventory.getTotalEndurance();
     }
 
+    // EFFECTS: Produce the total dexterity of a character, including equipment modifiers
     public int getDexterity() {
         return this.dexterity + this.inventory.getTotalDexterity();
     }
 
+    // EFFECTS: Produce the total speed of a character, including equipment modifiers
     public int getSpeed() {
         return this.speed + this.inventory.getTotalSpeed();
     }
 
+    // EFFECTS: Produce the current inventory of a character
     public Inventory getInventory() {
         return this.inventory;
     }
 
+    // EFFECTS: Produce the current amount of gold a character has
     public int getGold() {
         return this.gold;
     }
