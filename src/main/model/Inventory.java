@@ -40,20 +40,54 @@ public class Inventory {
         this.equipment.remove(index);
     }
 
+    public int getTotalStrength() {
+        int strength = 0;
+        for (Equipment equipment : this.equipment) {
+            strength += equipment.getStrength();
+        }
+        return strength;
+    }
+
+    public int getTotalEndurance() {
+        int endurance = 0;
+        for (Equipment equipment : this.equipment) {
+            endurance += equipment.getEndurance();
+        }
+        return endurance;
+    }
+
+    public int getTotalDexterity() {
+        int dexterity = 0;
+        for (Equipment equipment : this.equipment) {
+            dexterity += equipment.getEndurance();
+        }
+        return dexterity;
+    }
+
+    public int getTotalSpeed() {
+        int speed = 0;
+        for (Equipment equipment : this.equipment) {
+            speed += equipment.getEndurance();
+        }
+        return speed;
+    }
+
+
     // EFFECTS: produce a list of all the current stat modifiers from equipment in an inventory
     public List<Integer> getModifierTotals() {
         int strength = 0;
         int endurance = 0;
         int dexterity = 0;
         int speed = 0;
-//        List<Integer> totals = new ArrayList<>();
-        for (Equipment equipment : this.equipment) {
+
+        for (Equipment equipment : this.equipment) {  // Sum up all the totals
             strength += equipment.getStrength();
             endurance += equipment.getEndurance();
             dexterity += equipment.getDexterity();
             speed += equipment.getSpeed();
         }
 
+        // Return the totals as a list [0 - 3]
         return Arrays.asList(strength, endurance, dexterity, speed);
 
     }
