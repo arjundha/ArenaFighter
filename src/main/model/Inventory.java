@@ -25,21 +25,7 @@ public class Inventory {
         return this.equipment.get(index);
     }
 
-    // REQUIRES: worth > 0
-    // MODIFIES: this
-    // EFFECTS: adds a new equipment to the inventory of equipment
-    public void addEquipment(String itemName, int str, int end, int dex, int spd, int worth) {
-        Equipment equipment = new Equipment(itemName, str, end, dex, spd, worth);
-        this.equipment.add(equipment);
-    }
-
-    // REQUIRES: 0 <= index < this.equipment.size()
-    // MODIFIES: this
-    // EFFECTS: remove an equipment from an Inventory
-    public void removeEquipment(int index) {
-        this.equipment.remove(index);
-    }
-
+    // EFFECTS: produce the total strength modification value from elements in the Inventory
     public int getTotalStrength() {
         int strength = 0;
         for (Equipment equipment : this.equipment) {
@@ -48,6 +34,7 @@ public class Inventory {
         return strength;
     }
 
+    // EFFECTS: produce the total endurance modification value from elements in the Inventory
     public int getTotalEndurance() {
         int endurance = 0;
         for (Equipment equipment : this.equipment) {
@@ -56,6 +43,7 @@ public class Inventory {
         return endurance;
     }
 
+    // EFFECTS: produce the total dexterity modification value from elements in the Inventory
     public int getTotalDexterity() {
         int dexterity = 0;
         for (Equipment equipment : this.equipment) {
@@ -64,6 +52,7 @@ public class Inventory {
         return dexterity;
     }
 
+    // EFFECTS: produce the total speed modification value from elements in the Inventory
     public int getTotalSpeed() {
         int speed = 0;
         for (Equipment equipment : this.equipment) {
@@ -71,7 +60,6 @@ public class Inventory {
         }
         return speed;
     }
-
 
     // EFFECTS: produce a list of all the current stat modifiers from equipment in an inventory
     public List<Integer> getModifierTotals() {
@@ -89,7 +77,21 @@ public class Inventory {
 
         // Return the totals as a list [0 - 3]
         return Arrays.asList(strength, endurance, dexterity, speed);
+    }
 
+    // REQUIRES: worth > 0
+    // MODIFIES: this
+    // EFFECTS: adds a new equipment to the inventory of equipment
+    public void addEquipment(String itemName, int str, int end, int dex, int spd, int worth) {
+        Equipment equipment = new Equipment(itemName, str, end, dex, spd, worth);
+        this.equipment.add(equipment);
+    }
+
+    // REQUIRES: 0 <= index < this.equipment.size()
+    // MODIFIES: this
+    // EFFECTS: remove an equipment from an Inventory
+    public void removeEquipment(int index) {
+        this.equipment.remove(index);
     }
 
 
