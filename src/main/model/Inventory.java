@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * A representation of a collection of equipment that a character has in their possession.
+ *
+ *
+ */
+
 // Represents all the equipment currently owned by a player (their inventory of equipment)
 public class Inventory {
     private List<Equipment> equipment;
@@ -39,11 +45,17 @@ public class Inventory {
             strength += equipment.getStrength();
             endurance += equipment.getEndurance();
             dexterity += equipment.getDexterity();
-            speed += equipment.getDexterity();
+            speed += equipment.getSpeed();
         }
 
         return Arrays.asList(strength, endurance, dexterity, speed);
 
+    }
+
+    // REQUIRES: 0 <= index < this.equipment.size()
+    // EFFECTS: produce a specific equipment at a specified index
+    public Equipment getEquipment(int index) {
+        return this.equipment.get(index);
     }
 
 
