@@ -1,5 +1,7 @@
 package ui;
 
+import model.Equipment;
+import model.Inventory;
 import player.Character;
 
 import java.util.Scanner;
@@ -31,6 +33,12 @@ public class Game {
         System.out.println("Spd: " + player.getSpeed());
         System.out.println("Inv: " + player.getInventory());
         System.out.println("Gold: " + player.getGold());
+
+        player.equipItem(new Equipment("dagger", 20, 1, 1, 1, 10));
+        player.equipItem(new Equipment("dagger", 20, 1, 1, 1, 10));
+
+        System.out.println("Str: " + player.getStrength());
+        printInventory(player.getInventory());
 
     }
 
@@ -117,5 +125,13 @@ public class Game {
                     break;  // We continue until they select a viable option!
             }
         }
+    }
+
+    private void printInventory(Inventory inventory) {
+        for (int i = 0; i < inventory.inventorySize(); i++) {
+            Equipment item = inventory.getEquipment(i);
+            System.out.println(item.getName());
+        }
+
     }
 }

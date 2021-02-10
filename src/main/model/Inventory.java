@@ -100,7 +100,7 @@ public class Inventory {
         this.equipment.remove(index);
     }
 
-
-
-
+    public int inventorySize() {
+        return this.equipment.size();
+    }
 }
