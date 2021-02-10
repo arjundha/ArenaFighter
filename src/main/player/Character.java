@@ -178,6 +178,19 @@ public class Character {
         this.hitpoints.set(0, Math.min(newHP, maxHP));  // set HP to the whatever is smaller (new or max)
     }
 
+    // REQUIRES: damage must be a non negative integer
+    // MODIFIES: this
+    // EFFECTS: Reduce the current HP of a character by a certain amount (damage)
+    public void takeDamage(int damage) {
+        int current = this.hitpoints.get(0);
+        this.hitpoints.set(0, current - damage);
+    }
+
+    // EFFECTS: Returns true if a character is dead (HP is less than or equal to 0)
+    public boolean isDead() {
+        return (this.hitpoints.get(0) <= 0);
+    }
+
 
 }
 
