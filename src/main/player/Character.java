@@ -157,6 +157,27 @@ public class Character {
         }
     }
 
+    // REQUIRES: amount >= this.gold
+    // MODIFIES: this
+    // EFFECTS: Removes a certain amount of gold from a character, where amount is the gold to be spent
+    public void spendGold(int amount) {
+        this.gold -= amount;
+    }
+
+    // REQUIRES: amount must be a non negative integer
+    // MODIFIES: this
+    // EFFECTS: Heal a character by increasing their current health by a certain amount, or till it reached the max
+    public void healCharacter(int amount) {
+        int maxHP = this.hitpoints.get(1);
+        int newHP = this.hitpoints.get(0) + amount;
+//        if (newHP > maxHP) {
+//            this.hitpoints.set(0, maxHP);
+//        } else {
+//            this.hitpoints.set(0, newHP);
+//        }
+        this.hitpoints.set(0, Math.min(newHP, maxHP));  // set HP to the whatever is smaller (new or max)
+    }
+
 
 }
 
