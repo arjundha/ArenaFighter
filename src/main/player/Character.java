@@ -23,14 +23,15 @@ public class Character {
     private int gold;  // the amount of gold a character has
 
     private static final int STARTING_LEVEL = 1;  // These fields determine what level a character starts at
-    public static final int STARTING_GOLD = 50;  // and what amount of gold they should have at the beginning of a game
+    private static final int STARTING_GOLD = 50;  // and what amount of gold they should have at the beginning of a game
 
-    public static final int WARRIOR_HEALTH_INCREASE = 10;  // The amount of HP a warrior increases on level up or train
-    public static final int ROGUE_HEALTH_INCREASE = 5;  // The amount of HP a rogue increases on level up
-    public static final int MERCHANT_HEALTH_INCREASE = 1;  // Merchants gain little HP when levelling up or training
+    private static final int WARRIOR_HEALTH_INCREASE = 10;  // The amount of HP a warrior increases on level up or train
+    private static final int ROGUE_HEALTH_INCREASE = 5;  // The amount of HP a rogue increases on level up
+    private static final int MERCHANT_HEALTH_INCREASE = 1;  // Merchants gain little HP when levelling up or training
 
-    public static final int FAVOURABLE_STAT_INCREASE = 3; //
-    public static final int UNFAVOURABLE_STAT_INCREASE = 1; //
+    private static final int ROGUE_DEX_STAT_BONUS = 5; // Elves dexterity increases higher than any class
+    private static final int FAVOURABLE_STAT_INCREASE = 3; //
+    private static final int UNFAVOURABLE_STAT_INCREASE = 1; //
 
 
     /*
@@ -146,7 +147,7 @@ public class Character {
             this.hitpoints.set(1, (this.hitpoints.get(1) + ROGUE_HEALTH_INCREASE));  // ROGUE hp increases
             this.strength += UNFAVOURABLE_STAT_INCREASE;
             this.endurance += UNFAVOURABLE_STAT_INCREASE;
-            this.dexterity += FAVOURABLE_STAT_INCREASE;  // Rogues gain more dex and speed
+            this.dexterity += ROGUE_DEX_STAT_BONUS;  // Rogues gain more dex and speed
             this.speed += FAVOURABLE_STAT_INCREASE;
 
         } else {
@@ -197,8 +198,6 @@ public class Character {
     public void equipItem(Equipment item) {
         this.inventory.addEquipment(item);
     }
-
-
 }
 
 
