@@ -34,7 +34,10 @@ public class Game {
 
         String race = chooseRace();
         System.out.printf("\n%s? I could tell, I just didn't want to assume anything. "
-                + "\nFinally, just one last question before we can get you started!", race.toUpperCase());
+                + "\nFinally, just one last question before we can get you started!",
+                race.substring(0, 1).toUpperCase() + race.substring(1));
+
+        String playerClass = chooseClass();
 
         return new Character("testname", "testrace", "testclass",
                 10, 10, 10, 10, 10);
@@ -59,6 +62,36 @@ public class Game {
 
                 case "3":
                     return "elf";  // 3 is an elf
+
+                default:
+                    System.out.println("\nI'm not sure I heard you correctly, just tell me if you are 1, 2 or 3.");
+                    break;  // We continue until they select a viable option!
+            }
+        }
+    }
+
+    private String chooseClass() {
+        input = new Scanner(System.in);
+        while (true) {
+            System.out.println("\nWhat class are you?");
+
+            System.out.println("\t1) Warrior - these brutes gain the most HP, Strength and endurance.");
+            System.out.println("\t2) Rogue - as masters of stealth, "
+                    + "rogues have the highest dexterity and speed growth.");
+            System.out.println("\t3) Merchant - while they may be generally weak in ever regard, "
+                    + "merchants start with the most gold, and also gain more gold than other classes.");
+
+            String selection = input.nextLine().trim();  // User should respond with 1, 2 or 3
+
+            switch (selection) {  // This switch handles the user input according to the options above
+                case "1":
+                    return "warrior";  // If they input 1, they become a warrior
+
+                case "2":
+                    return "rogue";  // 2 is a rogue
+
+                case "3":
+                    return "merchant";  // 3 is a merchant
 
                 default:
                     System.out.println("\nI'm not sure I heard you correctly, just tell me if you are 1, 2 or 3.");
