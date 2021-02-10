@@ -81,10 +81,16 @@ public class Inventory {
 
     // REQUIRES: worth > 0
     // MODIFIES: this
-    // EFFECTS: adds a new equipment to the inventory of equipment
-    public void addEquipment(String itemName, int str, int end, int dex, int spd, int worth) {
+    // EFFECTS: create and add a new equipment to the inventory of equipment
+    public void addNewEquipment(String itemName, int str, int end, int dex, int spd, int worth) {
         Equipment equipment = new Equipment(itemName, str, end, dex, spd, worth);
         this.equipment.add(equipment);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: adds a new equipment to the inventory of equipment
+    public void addEquipment(Equipment item) {
+        this.equipment.add(item);
     }
 
     // REQUIRES: 0 <= index < this.equipment.size()
