@@ -33,31 +33,31 @@ public class Equipment {
 
     // EFFECTS: returns the name of an equipment item
     public String getName() {
-        return name;
+        return this.name;
     }
 
     // EFFECTS: returns the strength modifier of an equipment item
     public int getStrength() {
-        return strength;
+        return this.strength;
     }
 
     // EFFECTS: returns the endurance modifier of an equipment item
     public int getEndurance() {
-        return endurance;
+        return this.endurance;
     }
 
     // EFFECTS: returns the dexterity modifier of an equipment item
     public int getDexterity() {
-        return dexterity;
+        return this.dexterity;
     }
 
     // EFFECTS: returns the speed modifier of an equipment item
     public int getSpeed() {
-        return speed;
+        return this.speed;
     }
 
     // EFFECTS: returns the worth in gold of an equipment item
     public int getWorth() {
-        return worth;
+        return this.worth;
     }
 }
