@@ -1,5 +1,6 @@
 package player;
 
+import model.Equipment;
 import model.Inventory;
 
 import java.util.Arrays;
@@ -189,6 +190,12 @@ public class Character {
     // EFFECTS: Returns true if a character is dead (HP is less than or equal to 0)
     public boolean isDead() {
         return (this.hitpoints.get(0) <= 0);
+    }
+
+    // MODIFIES: This
+    // EFFECTS: adds an equipment to a characters inventory
+    public void equipItem(Equipment item) {
+        this.inventory.addEquipment(item);
     }
 
 
