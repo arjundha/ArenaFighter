@@ -19,7 +19,18 @@ public class Game {
     // EFFECTS: Handles and processes user input to initialize a game
     private void runGame() {
         Character player = createCharacter();  // Begin the game by creating a character
-
+        System.out.println("Name: " + player.getName());
+        System.out.println("Race: " + player.getRace());
+        System.out.println("Class: " + player.getClassName());
+        System.out.println("Level: " + player.getLevel());
+        System.out.println("Current HP: " + player.getCurrentHealth());
+        System.out.println("Max HP: " + player.getMaxHealth());
+        System.out.println("Str: " + player.getStrength());
+        System.out.println("End: " + player.getEndurance());
+        System.out.println("Dex: " + player.getDexterity());
+        System.out.println("Spd: " + player.getSpeed());
+        System.out.println("Inv: " + player.getInventory());
+        System.out.println("Gold: " + player.getGold());
 
     }
 
@@ -38,10 +49,18 @@ public class Game {
                 race.substring(0, 1).toUpperCase() + race.substring(1));
 
         String playerClass = chooseClass();
+        System.out.printf("\nA %s %s, haven't seen one of those before! Well, good luck in there!\n",
+                playerClass, race);
 
-        return new Character("testname", "testrace", "testclass",
-                10, 10, 10, 10, 10);
+        if (race.equals("human")) {
+            return new Character(name, race, playerClass, 10, 10, 10, 10, 10);
 
+        } else if (race.equals("dwarf")) {
+            return new Character(name, race, playerClass, 12, 12, 12, 7, 7);
+
+        } else {
+            return new Character(name, race, playerClass, 8, 8, 8, 14, 12);
+        }
     }
 
     private String chooseRace() {
