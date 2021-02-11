@@ -21,6 +21,9 @@ public class Game {
     // If more equipment is added to that function, this number needs to change.
     private static final int RANDOM_ITEM_SELECTOR = 12;
 
+    private static final int PRICE_OF_SMALL_TRAINING = 30;  // Price of a small training room in gold
+    private static final int PRICE_OF_LARGE_TRAINING = 50; // Price of a large training room in gold
+
 
     // EFFECTS: runs the game application
     public Game() {
@@ -150,7 +153,7 @@ public class Game {
                 break;
 
             case "2":
-                System.out.println("TRAIN");
+                train(player);
                 break;
 
             case "3":
@@ -172,43 +175,6 @@ public class Game {
             default:
                 System.out.println("\nI don't think I want to do that. Let's think again...\n");
         }
-    }
-
-    // EFFECTS: Print out detailed information for each equipment in an inventory
-    private void printInventory(Inventory inventory) {
-        if (inventory.inventorySize() == 0) {
-            System.out.println("\nMy inventory is empty.");
-        } else {
-            for (int i = 0; i < inventory.inventorySize(); i++) {
-                Equipment item = inventory.getEquipment(i);
-                System.out.printf("\n%d. %s: Strength - %d   Endurance - %d   Dexterity - %d   Speed - %d   VALUE: %d",
-                        i + 1,
-                        item.getName().substring(0, 1).toUpperCase() + item.getName().substring(1),  // Capitalize name
-                        item.getStrength(),
-                        item.getEndurance(),
-                        item.getDexterity(),
-                        item.getSpeed(),
-                        item.getWorth());
-            }
-        }
-
-    }
-
-    // EFFECTS: Print out all the stats of a character except for inventory
-    private void printCharacter(Character player) {
-        System.out.printf("\n\nName: %s\nRace: %s\nClass: %s\n\nLEVEL: %s"
-                        +  "\nHP: %d/%d\nSTR: %d\nEND: %d\nDEX: %d\nSPD: %d\n\nGOLD: %d\n",
-                player.getName(),
-                player.getRace().substring(0, 1).toUpperCase() + player.getRace().substring(1), // Capitalize
-                player.getClassName().substring(0, 1).toUpperCase() + player.getClassName().substring(1), // Capitalize
-                player.getLevel(),
-                player.getCurrentHealth(),
-                player.getMaxHealth(),
-                player.getStrength(),
-                player.getEndurance(),
-                player.getDexterity(),
-                player.getSpeed(),
-                player.getGold());
     }
 
     // REQUIRES: User must input an integer when asked for a selection
@@ -328,6 +294,104 @@ public class Game {
 
         }
     }
+
+    // EFFECTS: Provides core UI for training a character and receiving user input
+    private void train(Character player) {
+        input = new Scanner(System.in);
+        System.out.println("\nIt looks like I can spend some gold to train my stats!");
+
+        boolean sentinel = true;
+
+        while (sentinel) {
+            System.out.println("\nWhat should I do...? (or press \"b\" to go back)");
+            System.out.printf("(You currently have %d gold)\n", player.getGold());
+            System.out.printf("\t1) Rent a small training room (%dg).", PRICE_OF_SMALL_TRAINING);
+            System.out.printf("\t2) Rent a large training room (%dg).\n", PRICE_OF_LARGE_TRAINING);
+            String selection = input.nextLine().trim();  // User response
+
+            if (selection.equals("b")) {
+                System.out.println("\nMaybe I'll train more later.");
+                sentinel = false;  // Back out of the loop and to the main menu
+
+            } else {
+                trainCharacter(player, selection);
+            }
+        }
+    }
+
+    // MODIFIES: Character (May increase the stats of a character and reduces their gold)
+    // EFFECTS: Spend gold to increase the stats of a player character
+    private void trainCharacter(Character player, String selection) {
+        int gold = player.getGold();
+        String playerClass = player.getClassName();
+
+        if (selection.equals("1")) {  // Small training (ONLY TRAINS ONCE)
+
+            if (gold >= PRICE_OF_SMALL_TRAINING) {
+                player.spendGold(PRICE_OF_SMALL_TRAINING);
+                player.increaseStats(playerClass);
+                System.out.println("\nGreat! I feel a bit stronger!");
+
+            } else {
+                System.out.println("\nHmm I don't think I can afford this right now.");
+            }
+
+        } else if (selection.equals("2")) {  // Large training (TRAINS TWICE)
+
+            if (gold >= PRICE_OF_LARGE_TRAINING) {
+                player.spendGold(PRICE_OF_LARGE_TRAINING);
+                player.increaseStats(playerClass);
+                player.increaseStats(playerClass);  // Bonus training due to large training
+                System.out.println("\nAmazing! I feel a lot stronger!");
+
+            } else {
+                System.out.println("\nHmm I don't think I can afford this right now.");
+            }
+
+        } else {
+            System.out.println("\nI don't think I can do that.");
+        }
+    }
+
+
+    // EFFECTS: Print out detailed information for each equipment in an inventory
+    private void printInventory(Inventory inventory) {
+        if (inventory.inventorySize() == 0) {
+            System.out.println("\nMy inventory is empty.");
+        } else {
+            for (int i = 0; i < inventory.inventorySize(); i++) {
+                Equipment item = inventory.getEquipment(i);
+                System.out.printf("\n%d. %s: Strength - %d   Endurance - %d   Dexterity - %d   Speed - %d   VALUE: %d",
+                        i + 1,
+                        item.getName().substring(0, 1).toUpperCase() + item.getName().substring(1),  // Capitalize name
+                        item.getStrength(),
+                        item.getEndurance(),
+                        item.getDexterity(),
+                        item.getSpeed(),
+                        item.getWorth());
+            }
+        }
+
+    }
+
+
+    // EFFECTS: Print out all the stats of a character except for inventory
+    private void printCharacter(Character player) {
+        System.out.printf("\n\nName: %s\nRace: %s\nClass: %s\n\nLEVEL: %s"
+                        +  "\nHP: %d/%d\nSTR: %d\nEND: %d\nDEX: %d\nSPD: %d\n\nGOLD: %d\n",
+                player.getName(),
+                player.getRace().substring(0, 1).toUpperCase() + player.getRace().substring(1), // Capitalize
+                player.getClassName().substring(0, 1).toUpperCase() + player.getClassName().substring(1), // Capitalize
+                player.getLevel(),
+                player.getCurrentHealth(),
+                player.getMaxHealth(),
+                player.getStrength(),
+                player.getEndurance(),
+                player.getDexterity(),
+                player.getSpeed(),
+                player.getGold());
+    }
+
 
     // REQUIRES: upperbound must be a positive integer represent the highest integer you want to possibly get
     // EFFECTS: Generates a random integer from [0, upperbound] inclusive
