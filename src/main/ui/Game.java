@@ -201,6 +201,10 @@ public class Game {
             if (selection.equals("b")) {
                 System.out.println("\nI think I've shopped enough for now.");
                 sentinel = false;  // Back out of the loop and to the main menu
+
+            } else if (!isInteger(selection)) {
+                System.out.println("\nPlease select a valid option.");
+
             } else {
                 buyItem(player, shopInventory, Integer.parseInt(selection));
             }
@@ -465,5 +469,16 @@ public class Game {
     private int generateRandomInteger(int upperbound) {
         Random random = new Random();  // Start a random class object
         return random.nextInt(upperbound + 1);  // Return a random int (the + 1 is needed to include upperbound)
+    }
+
+    // EFFECTS: Determine if a string is an integer
+    public boolean isInteger(String input) {
+        try {
+            Integer.parseInt(input);  // Try to see if you can parse the string into an integer
+            return true;
+
+        } catch (Exception e) {  // Catch the error if it is not able to be parsed, and return false
+            return false;
+        }
     }
 }
