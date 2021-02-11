@@ -73,6 +73,7 @@ public class Game {
         }
     }
 
+    // EFFECTS: Produce a race based on user input
     private String chooseRace() {
         input = new Scanner(System.in);
         while (true) {
@@ -99,6 +100,7 @@ public class Game {
         }
     }
 
+    // EFFECTS: Produce a class based on user input
     private String chooseClass() {
         input = new Scanner(System.in);
         while (true) {
@@ -131,7 +133,7 @@ public class Game {
 
     // EFFECTS: Displays menu options to the player
     private void printMenu() {
-        System.out.println("\nLooks like there's still some time before my next fight, what should I do?");
+        System.out.println("\n\nLooks like there's still some time before my next fight, what should I do?");
         System.out.println("\t1) Shop - spend my gold for better weapons and armour at a nearby store.");
         System.out.println("\t2) Train - rent a training space to increase my stats by a little.");
         System.out.println("\t3) Heal - buy a health potion to heal my wounds.");
@@ -144,22 +146,28 @@ public class Game {
     private void handleMenuSelection(Character player, String selection) {
         switch (selection) {
             case "1":
-                System.out.println("SHOP FUNCTION");
+                shop(player);
+                break;
 
             case "2":
                 System.out.println("TRAIN");
+                break;
 
             case "3":
                 System.out.println("HEAL");
+                break;
 
             case "4":
                 printCharacter(player);
+                break;
 
             case "5":
                 printInventory(player.getInventory());
+                break;
 
             case "6":
                 System.out.println("FIGHT");
+                break;
 
             default:
                 System.out.println("\nI don't think I want to do that. Let's think again...\n");
@@ -168,16 +176,20 @@ public class Game {
 
     // EFFECTS: Print out detailed information for each equipment in an inventory
     private void printInventory(Inventory inventory) {
-        for (int i = 0; i < inventory.inventorySize(); i++) {
-            Equipment item = inventory.getEquipment(i);
-            System.out.printf("\n%d. %s: Strength - %d   Endurance - %d   Dexterity - %d   Speed - %d   VALUE: %d",
-                    i + 1,
-                    item.getName().substring(0, 1).toUpperCase() + item.getName().substring(1),  // Capitalize name
-                    item.getStrength(),
-                    item.getEndurance(),
-                    item.getDexterity(),
-                    item.getSpeed(),
-                    item.getWorth());
+        if (inventory.inventorySize() == 0) {
+            System.out.println("\nMy inventory is empty.");
+        } else {
+            for (int i = 0; i < inventory.inventorySize(); i++) {
+                Equipment item = inventory.getEquipment(i);
+                System.out.printf("\n%d. %s: Strength - %d   Endurance - %d   Dexterity - %d   Speed - %d   VALUE: %d",
+                        i + 1,
+                        item.getName().substring(0, 1).toUpperCase() + item.getName().substring(1),  // Capitalize name
+                        item.getStrength(),
+                        item.getEndurance(),
+                        item.getDexterity(),
+                        item.getSpeed(),
+                        item.getWorth());
+            }
         }
 
     }
@@ -185,7 +197,7 @@ public class Game {
     // EFFECTS: Print out all the stats of a character except for inventory
     private void printCharacter(Character player) {
         System.out.printf("\n\nName: %s\nRace: %s\nClass: %s\n\nLEVEL: %s"
-                        +  "\nHP: %d/%d\nSTR: %d\nEND: %d\nDEX: %d\nSPD: %d\n\nGOLD: %d\n\n",
+                        +  "\nHP: %d/%d\nSTR: %d\nEND: %d\nDEX: %d\nSPD: %d\n\nGOLD: %d\n",
                 player.getName(),
                 player.getRace().substring(0, 1).toUpperCase() + player.getRace().substring(1), // Capitalize
                 player.getClassName().substring(0, 1).toUpperCase() + player.getClassName().substring(1), // Capitalize
@@ -199,10 +211,62 @@ public class Game {
                 player.getGold());
     }
 
+    // REQUIRES: User must input an integer when asked for a selection
+    // EFFECTS: Allow users to spend gold and add items to their inventory
+    private void shop(Character player) {
+        input = new Scanner(System.in);
+        System.out.println("\nWelcome! Here to buy some equipment?");
+        Inventory shopInventory = generateShop();
+        boolean sentinel = true;
+
+        while (sentinel) {
+            System.out.println("\nWhat would you like to buy? (or press \"b\" to go back)");
+            System.out.printf("(You currently have %d gold)\n", player.getGold());
+            printInventory(shopInventory);
+            System.out.println("\n");
+            String selection = input.nextLine().trim();  // User response based on item
+
+            if (selection.equals("b")) {
+                System.out.println("\nI think I've shopped enough for now.");
+                sentinel = false;  // Back out of the loop and to the main menu
+            } else {
+                buyItem(player, shopInventory, Integer.parseInt(selection));
+            }
+        }
+    }
+
+    // MODIFIES: Inventory and Character
+    // EFFECTS: Remove an item from a shop inventory and place it in a Character inventory after spending gold
+    private void buyItem(Character character, Inventory shop, int item) {
+        if (shop.inventorySize() == 0) {  // Check if the inventory is empty
+            System.out.println("\nSorry, I am sold out!");
+
+        } else if (0 < item && item <= shop.inventorySize()) {  // Check if the user input is within the options
+            int index = item - 1;  // get the index of the element we want
+            Equipment equipment = shop.getEquipment(index);
+            int cost = equipment.getWorth();  // How much does it cost?
+
+            if (character.getGold() >= cost) {  // Can afford it
+                character.equipItem(equipment);  // Add the equipment to your inventory
+                character.spendGold(cost);  // Spend the gold needed to buy the item
+                shop.removeEquipment(index);  // Remove the equipment from the store
+                System.out.printf("You buy the %s.", equipment.getName());  // Informative message
+
+            } else {  // Cant afford it
+                System.out.println("\nAh, it appears as if you do not have enough gold for that, sorry.");
+            }
+
+        } else {
+            System.out.println("\nI don't think I have that in stock...");
+        }
+    }
+
+    // EFFECTS: Produce a randomized inventory to be sold in a shop
     private Inventory generateShop() {
         System.out.println("\nAh now, let me see what we have today...\n");
         int count = 0;
         Inventory shopInventory = new Inventory();
+
         while (count < NUMBER_OF_EQUIPMENT_PAIRS_SOLD) {  // We want the shop to only contain a certain number of items
             shopInventory.addEquipment(generateWeapon(generateRandomInteger(RANDOM_ITEM_SELECTOR)));
             shopInventory.addEquipment(generateArmour(generateRandomInteger(RANDOM_ITEM_SELECTOR)));
