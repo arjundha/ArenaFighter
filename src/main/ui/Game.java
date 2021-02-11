@@ -24,6 +24,12 @@ public class Game {
     private static final int PRICE_OF_SMALL_TRAINING = 30;  // Price of a small training room in gold
     private static final int PRICE_OF_LARGE_TRAINING = 50; // Price of a large training room in gold
 
+    private static final int PRICE_OF_SMALL_POTION = 10;  // Price of a small potion
+    private static final int PRICE_OF_LARGE_POTION = 20; // Price of a large potion
+
+    private static final int HEALTH_FROM_SMALL_POTION = 10;
+    private static final int HEALTH_FROM_LARGE_POTION = 25;
+
 
     // EFFECTS: runs the game application
     public Game() {
@@ -157,7 +163,7 @@ public class Game {
                 break;
 
             case "3":
-                System.out.println("HEAL");
+                heal(player);
                 break;
 
             case "4":
@@ -305,7 +311,7 @@ public class Game {
         while (sentinel) {
             System.out.println("\nWhat should I do...? (or press \"b\" to go back)");
             System.out.printf("(You currently have %d gold)\n", player.getGold());
-            System.out.printf("\t1) Rent a small training room (%dg).", PRICE_OF_SMALL_TRAINING);
+            System.out.printf("\t1) Rent a small training room (%dg).\n", PRICE_OF_SMALL_TRAINING);
             System.out.printf("\t2) Rent a large training room (%dg).\n", PRICE_OF_LARGE_TRAINING);
             String selection = input.nextLine().trim();  // User response
 
@@ -326,7 +332,6 @@ public class Game {
         String playerClass = player.getClassName();
 
         if (selection.equals("1")) {  // Small training (ONLY TRAINS ONCE)
-
             if (gold >= PRICE_OF_SMALL_TRAINING) {
                 player.spendGold(PRICE_OF_SMALL_TRAINING);
                 player.increaseStats(playerClass);
@@ -337,7 +342,6 @@ public class Game {
             }
 
         } else if (selection.equals("2")) {  // Large training (TRAINS TWICE)
-
             if (gold >= PRICE_OF_LARGE_TRAINING) {
                 player.spendGold(PRICE_OF_LARGE_TRAINING);
                 player.increaseStats(playerClass);
@@ -353,6 +357,69 @@ public class Game {
         }
     }
 
+    // EFFECTS: Generate UI to guide players through selecting potions to buy
+    private void heal(Character player) {
+        input = new Scanner(System.in);
+        System.out.println("\nIt might be a good idea to drink a potion and heal before my fight.");
+
+        boolean sentinel = true;
+
+        while (sentinel) {
+            System.out.println("\nThere seems to be a variety of potions, which should I buy? "
+                    + "(or press \"b\" to go back)");
+            System.out.printf("(You currently have %d gold and your HP is %d/%d)\n",
+                    player.getGold(), player.getCurrentHealth(), player.getMaxHealth());
+
+            System.out.printf("\t1) Drink a small potion (%dg).\n", PRICE_OF_SMALL_POTION);
+            System.out.printf("\t2) Drink a large potion (%dg).\n", PRICE_OF_LARGE_POTION);
+
+            String selection = input.nextLine().trim();  // User response
+
+
+            if (selection.equals("b")) {
+                System.out.println("\nPerhaps I'll try a potion later.");
+                sentinel = false;  // Back out of the loop and to the main menu
+
+            } else {
+                healCharacter(player, selection);
+            }
+
+        }
+
+    }
+
+    // MODIFIES: Character (May increase the current health of a character and reduces their gold)
+    // EFFECTS: Spend gold to increase the current health of a player character
+    private void healCharacter(Character player, String selection) {
+        int gold = player.getGold();
+
+        if (selection.equals("1")) {  // Small potion
+            if (gold >= PRICE_OF_SMALL_POTION) {  // can you afford it?
+                player.spendGold(PRICE_OF_SMALL_POTION);  // Charge the player gold
+                player.healCharacter(HEALTH_FROM_SMALL_POTION);
+                System.out.println("\nGreat! I feel way better!");
+                System.out.printf("(HP: %d/%d)\n", player.getCurrentHealth(), player.getMaxHealth());
+
+
+            } else {
+                System.out.println("\nHmm I don't think I can afford this right now.");
+            }
+
+        } else if (selection.equals("2")) {  // Large potion heals more but costs more
+            if (gold >= PRICE_OF_LARGE_POTION) {
+                player.spendGold(PRICE_OF_LARGE_POTION);
+                player.healCharacter(HEALTH_FROM_LARGE_POTION);
+                System.out.println("\nAmazing! I feel a lot healthier!");
+                System.out.printf("(HP: %d/%d)\n", player.getCurrentHealth(), player.getMaxHealth());
+
+            } else {
+                System.out.println("\nHmm I don't think I can afford this right now.");
+            }
+
+        } else {
+            System.out.println("\nI don't think I can do that.");
+        }
+    }
 
     // EFFECTS: Print out detailed information for each equipment in an inventory
     private void printInventory(Inventory inventory) {
