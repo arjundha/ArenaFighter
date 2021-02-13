@@ -64,31 +64,34 @@ public class Inventory {
         return speed;
     }
 
-    // EFFECTS: produce a list of all the current stat modifiers from equipment in an inventory
-    public List<Integer> getModifierTotals() {
-        int strength = 0;
-        int endurance = 0;
-        int dexterity = 0;
-        int speed = 0;
+    //  These two methods were methods that were originally used, but then broken down into different methods.
+    // I am keeping them in here in case they may be useful in future phases.
 
-        for (Equipment equipment : this.equipment) {  // Sum up all the totals
-            strength += equipment.getStrength();
-            endurance += equipment.getEndurance();
-            dexterity += equipment.getDexterity();
-            speed += equipment.getSpeed();
-        }
-
-        // Return the totals as a list [0 - 3]
-        return Arrays.asList(strength, endurance, dexterity, speed);
-    }
-
-    // REQUIRES: worth > 0
-    // MODIFIES: this
-    // EFFECTS: create and add a new equipment to the inventory of equipment
-    public void addNewEquipment(String itemName, int str, int end, int dex, int spd, int worth) {
-        Equipment equipment = new Equipment(itemName, str, end, dex, spd, worth);
-        this.equipment.add(equipment);
-    }
+//    // EFFECTS: produce a list of all the current stat modifiers from equipment in an inventory
+//    public List<Integer> getModifierTotals() {
+//        int strength = 0;
+//        int endurance = 0;
+//        int dexterity = 0;
+//        int speed = 0;
+//
+//        for (Equipment equipment : this.equipment) {  // Sum up all the totals
+//            strength += equipment.getStrength();
+//            endurance += equipment.getEndurance();
+//            dexterity += equipment.getDexterity();
+//            speed += equipment.getSpeed();
+//        }
+//
+//        // Return the totals as a list [0 - 3]
+//        return Arrays.asList(strength, endurance, dexterity, speed);
+//    }
+//
+//    // REQUIRES: worth > 0
+//    // MODIFIES: this
+//    // EFFECTS: create and add a new equipment to the inventory of equipment
+//    public void addNewEquipment(String itemName, int str, int end, int dex, int spd, int worth) {
+//        Equipment equipment = new Equipment(itemName, str, end, dex, spd, worth);
+//        this.equipment.add(equipment);
+//    }
 
     // MODIFIES: this
     // EFFECTS: adds a new equipment to the inventory of equipment
