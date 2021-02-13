@@ -12,7 +12,7 @@ import java.util.List;
 
 // Represents all the equipment currently owned by a player (their inventory of equipment)
 public class Inventory {
-    private List<Equipment> equipment;
+    private final List<Equipment> equipment;
 
     // EFFECTS: constructs an empty inventory
     public Inventory() {
@@ -47,7 +47,7 @@ public class Inventory {
     public int getTotalDexterity() {
         int dexterity = 0;
         for (Equipment equipment : this.equipment) {
-            dexterity += equipment.getEndurance();
+            dexterity += equipment.getDexterity();
         }
         return dexterity;
     }
@@ -56,7 +56,7 @@ public class Inventory {
     public int getTotalSpeed() {
         int speed = 0;
         for (Equipment equipment : this.equipment) {
-            speed += equipment.getEndurance();
+            speed += equipment.getSpeed();
         }
         return speed;
     }

@@ -14,12 +14,12 @@ package model;
 
 // Represents equipment that can be bought and used by a player to modify their stats
 public class Equipment {
-    private String name;  // The name of a weapon
-    private int strength; // The damage modifier of a weapon
-    private int endurance;  // the endurance modifier of a weapon
-    private int dexterity;  // the dexterity modifier of a weapon
-    private int speed;  // the speed modifier of a weapon
-    private int worth;  // The amount of gold a weapon is worth
+    private final String name;  // The name of a weapon
+    private final int strength; // The damage modifier of a weapon
+    private final int endurance;  // the endurance modifier of a weapon
+    private final int dexterity;  // the dexterity modifier of a weapon
+    private final int speed;  // the speed modifier of a weapon
+    private final int worth;  // The amount of gold a weapon is worth
 
     // EFFECTS: Constructs a weapon with a weapon name, the damage it does, and its worth in gold
     public Equipment(String name, int strength, int endurance, int dexterity, int speed, int worth) {
