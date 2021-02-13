@@ -13,22 +13,23 @@ import java.util.Scanner;
 public class Game {
     private Scanner input;
 
+    private static final int NUMBER_OF_LEVELS = 5; // This represents the number of levels in the game, it ends when the
+    // player level exceeds this number.
+
     private static final int NUMBER_OF_EQUIPMENT_PAIRS_SOLD = 4;  // Number represents the number of weapons and armour
-                                                            // sold divided by two (it controls the while loop
-                                                            // in generateStore
+    // sold divided by two (it controls the while loop
+    // in generateStore
 
     // This number is used to determine the number that randomInteger is allowed to reach when generating equipment.
     // If more equipment is added to that function, this number needs to change.
     private static final int RANDOM_ITEM_SELECTOR = 12;
-
     private static final int PRICE_OF_SMALL_TRAINING = 30;  // Price of a small training room in gold
-    private static final int PRICE_OF_LARGE_TRAINING = 50; // Price of a large training room in gold
-
+    private static final int PRICE_OF_LARGE_TRAINING = 50;  // Price of a large training room in gold
     private static final int PRICE_OF_SMALL_POTION = 10;  // Price of a small potion
-    private static final int PRICE_OF_LARGE_POTION = 20; // Price of a large potion
-
-    private static final int HEALTH_FROM_SMALL_POTION = 10;
-    private static final int HEALTH_FROM_LARGE_POTION = 25;
+    private static final int PRICE_OF_LARGE_POTION = 20;  // Price of a large potion
+    private static final int HEALTH_FROM_SMALL_POTION = 10;  // Amount of health healed from a small potion
+    private static final int HEALTH_FROM_LARGE_POTION = 25;  // Amount of health healed from a large potion
+    private static final int DEXTERITY_ROLL = 60; // Used for determining if an attack will miss (DEX > RANDOM_INT)
 
 
     // EFFECTS: runs the game application
@@ -40,16 +41,22 @@ public class Game {
     // EFFECTS: Handles and processes user input to initialize a game
     private void runGame() {
         Character player = createCharacter();  // Begin the game by creating a character
-        boolean alive = true;
+        boolean alive = true;  // sentinel value for if the player is alive
         input = new Scanner(System.in);
 
-        while (alive) {
+        while (alive && player.getLevel() <= NUMBER_OF_LEVELS) { // If the character is dead, we want to end the loop
             printMenu();
             String command = input.nextLine().trim();
             handleMenuSelection(player, command);
-            alive = !player.isDead();
-
+            alive = player.isAlive();  // Check if we should quit the loop
         }
+
+        if (player.isAlive()) {  // If the while loop ended and the player is alive
+            System.out.println("\nYou are now the champion of the arena!");
+        } else {
+            System.out.println("\nYou have died.");
+        }
+
         System.out.println("\nThank you for playing!");
     }
 
@@ -64,7 +71,7 @@ public class Game {
 
         String race = chooseRace();
         System.out.printf("\n%s? I could tell, I just didn't want to assume anything. "
-                + "\nFinally, just one last question before we can get you started!",
+                        + "\nFinally, just one last question before we can get you started!",
                 race.substring(0, 1).toUpperCase() + race.substring(1));
 
         String playerClass = chooseClass();
@@ -175,7 +182,7 @@ public class Game {
                 break;
 
             case "6":
-                System.out.println("FIGHT");
+                fight(player);
                 break;
 
             default:
@@ -425,12 +432,127 @@ public class Game {
         }
     }
 
+    // EFFECTS: Produce a round of combat.
+    private void fight(Character player) {
+        System.out.printf("\nAlright %s, let us see who you will be facing next...", player.getName());
+        Character enemy = generateEnemy(player.getLevel());  // Generate an enemy
+        printEnemy(enemy);  // Inform the player of who they are fighting
+
+        if (player.getSpeed() > enemy.getSpeed()) {  // The faster character goes first
+            combat(player, enemy);
+        } else {
+            combat(enemy, player);
+        }
+
+        System.out.println("\nThe round is over.");
+
+        if (player.isAlive()) {  // If the player was the winner, level them up and increase their stats
+            levelUpPlayer(player);
+        }
+    }
+
+    // EFFECTS: Produce an enemy corresponding to a players level
+    private Character generateEnemy(int level) {
+        // These are enemies that correspond to a player level
+        if (level == 1) {
+            return new Character("Goblin Knight", "goblin", "knight",
+                    10, 10, 10, 10, 10);
+
+        } else if (level == 2) {
+            return new Character("Huntress", "elf", "hunter",
+                    20, 8, 6, 30, 20);
+
+        } else if (level == 3) {
+            return new Character("Lich King", "lich", "wizard",
+                    20, 40, 10, 40, 10);
+
+        } else if (level == 4) {
+            return new Character("Shadow Assassin", "???", "assassin",
+                    30, 40, 10, 40, 40);
+
+        } else {
+            return new Character("Champion of the Arena", "tiefling", "champion",
+                    80, 20, 80, 30, 10);
+        }
+    }
+
+    // EFFECTS: Handles turn based combat
+    private void combat(Character player1, Character player2) {
+        input = new Scanner(System.in);
+        int playerOneHealth = player1.getCurrentHealth();  // Sentinel values for player health
+        int playerTwoHealth = player2.getCurrentHealth();
+
+        while (playerOneHealth > 0 && playerTwoHealth > 0) {  // End the while loop if either player is dead
+            System.out.println("\n(press enter to continue)");
+            String wait = input.nextLine();  // User response to continue the game (prevents wall of text)
+            attack(player1, player2);  // faster player attacks first
+            playerTwoHealth = player2.getCurrentHealth();
+
+            if (playerTwoHealth <= 0) {  // This if statement is needed to prevent bugs
+                break;
+            }
+
+            System.out.println("\n(press enter to continue)");
+            String wait2 = input.nextLine();  // User response to continue the game (prevents wall of text)
+            attack(player2, player1);
+            playerOneHealth = player1.getCurrentHealth();
+        }
+    }
+
+    // MODIFIES: Character defender by potentially lowering their current HP
+    // EFFECTS: Allow attackers to damage a defender or miss if they have low dexterity
+    private void attack(Character attacker, Character defender) {
+        int chanceToHit = generateRandomInteger(DEXTERITY_ROLL);  // Produce a random number. If DEX > this number
+        // then the attack will hit, or else it misses.
+
+        if (attacker.getDexterity() >= chanceToHit) {  // If attacker DEX is greater than the random number, it hits
+            System.out.printf("\n%s hits %s.", attacker.getName(), defender.getName());
+            int damage = attacker.getStrength() - defender.getEndurance() / 2;  // Calculate damage (END mitigates some)
+
+            if (damage <= 0) {  // Always deal at least 1 damage if an attack hits
+                defender.takeDamage(1);
+            } else {
+                defender.takeDamage(damage);  // If damage is > 0, deal the full number
+            }
+
+            battleMessage(attacker.getName(), defender.getName(), defender.getCurrentHealth());  // Print results
+
+        } else {
+            System.out.printf("\n%s missed.", attacker.getName());  // Let the player know the attack missed.
+        }
+    }
+
+    // EFFECTS: Print an informative message of the results of a combat attack.
+    private void battleMessage(String attacker, String defender, int defenderHealth) {
+        if (defenderHealth <= 0) {
+            System.out.printf("\n%s has slain %s.", attacker, defender);
+        } else {
+            System.out.printf("\n%s is still alive, with %d health remaining.", defender, defenderHealth);
+        }
+    }
+
+    // MODIFIES: Character
+    // EFFECTS: Increase a character's level by one, and increase their stats once with informative messages.
+    private void levelUpPlayer(Character player) {
+        System.out.println("\nYou won the fight! You feel a bit stronger!");
+        player.levelUp();
+        player.increaseStats(player.getClassName());
+        System.out.printf("\nYou are now level %d. Your stats have increased, and you gained some gold for winning "
+                + "the fight", player.getLevel());
+    }
+
+    // EFFECTS: Print out detailed information of an arena enemy.
+    private void printEnemy(Character enemy) {
+        System.out.println("\nYour opponent is...");
+        System.out.printf("\n%s the %s %s!", enemy.getName(), enemy.getRace(), enemy.getClassName());
+    }
+
     // EFFECTS: Print out detailed information for each equipment in an inventory
     private void printInventory(Inventory inventory) {
         if (inventory.inventorySize() == 0) {
             System.out.println("\nMy inventory is empty.");
         } else {
-            for (int i = 0; i < inventory.inventorySize(); i++) {
+            for (int i = 0; i < inventory.inventorySize(); i++) {  // Print out each Equipment in an Inventory
                 Equipment item = inventory.getEquipment(i);
                 System.out.printf("\n%d. %s: Strength - %d   Endurance - %d   Dexterity - %d   Speed - %d   VALUE: %d",
                         i + 1,
@@ -445,11 +567,10 @@ public class Game {
 
     }
 
-
     // EFFECTS: Print out all the stats of a character except for inventory
     private void printCharacter(Character player) {
         System.out.printf("\n\nName: %s\nRace: %s\nClass: %s\n\nLEVEL: %s"
-                        +  "\nHP: %d/%d\nSTR: %d\nEND: %d\nDEX: %d\nSPD: %d\n\nGOLD: %d\n",
+                        + "\nHP: %d/%d\nSTR: %d\nEND: %d\nDEX: %d\nSPD: %d\n\nGOLD: %d\n",
                 player.getName(),
                 player.getRace().substring(0, 1).toUpperCase() + player.getRace().substring(1), // Capitalize
                 player.getClassName().substring(0, 1).toUpperCase() + player.getClassName().substring(1), // Capitalize
@@ -462,7 +583,6 @@ public class Game {
                 player.getSpeed(),
                 player.getGold());
     }
-
 
     // REQUIRES: upperbound must be a positive integer represent the highest integer you want to possibly get
     // EFFECTS: Generates a random integer from [0, upperbound] inclusive
