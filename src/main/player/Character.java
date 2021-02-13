@@ -30,16 +30,17 @@ public class Character {
     private final Inventory inventory;  // the inventory of a character
     private int gold;  // the amount of gold a character has
 
-    private static final int STARTING_LEVEL = 1;  // These fields determine what level a character starts at
-    private static final int STARTING_GOLD = 50;  // and what amount of gold they should have at the beginning of a game
+    // These fields remain public for tests to accurately run
+    public static final int STARTING_LEVEL = 1;  // These fields determine what level a character starts at
+    public static final int STARTING_GOLD = 50;  // and what amount of gold they should have at the beginning of a game
 
-    private static final int WARRIOR_HEALTH_INCREASE = 10;  // The amount of HP a warrior increases on level up or train
-    private static final int ROGUE_HEALTH_INCREASE = 5;  // The amount of HP a rogue increases on level up
-    private static final int MERCHANT_HEALTH_INCREASE = 1;  // Merchants gain little HP when levelling up or training
+    public static final int WARRIOR_HEALTH_INCREASE = 10;  // The amount of HP a warrior increases on level up or train
+    public static final int ROGUE_HEALTH_INCREASE = 5;  // The amount of HP a rogue increases on level up
+    public static final int MERCHANT_HEALTH_INCREASE = 1;  // Merchants gain little HP when levelling up or training
 
-    private static final int ROGUE_DEX_STAT_BONUS = 5; // Elves dexterity increases higher than any class
-    private static final int FAVOURABLE_STAT_INCREASE = 3; //
-    private static final int UNFAVOURABLE_STAT_INCREASE = 1; //
+    public static final int ROGUE_DEX_STAT_BONUS = 5; // Rogue dexterity increases higher than any class
+    public static final int FAVOURABLE_STAT_INCREASE = 3; //
+    public static final int UNFAVOURABLE_STAT_INCREASE = 1; //
 
 
     /*
@@ -158,8 +159,8 @@ public class Character {
             this.dexterity += ROGUE_DEX_STAT_BONUS;  // Rogues gain more dex and speed
             this.speed += FAVOURABLE_STAT_INCREASE;
 
-        } else {
-            this.hitpoints.set(1, (this.hitpoints.get(1) + MERCHANT_HEALTH_INCREASE));  // Warrior hp increases
+        } else {  // Merchant
+            this.hitpoints.set(1, (this.hitpoints.get(1) + MERCHANT_HEALTH_INCREASE));  // Merchant hp increases
             this.strength += UNFAVOURABLE_STAT_INCREASE;  // Merchants don't gain much from stat increases, but
             this.endurance += UNFAVOURABLE_STAT_INCREASE; // they gain a lot of gold on level up
             this.dexterity += UNFAVOURABLE_STAT_INCREASE;
