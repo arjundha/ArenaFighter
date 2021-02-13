@@ -9,6 +9,8 @@ package model;
  * The modifier values of these equipment items will be added to the stats of a Character object if they are in
  * their inventory.
  *
+ * There are methods for getting each of the fields or values of an Equipment.
+ *
  * @author Arjun
  */
 

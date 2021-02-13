@@ -7,7 +7,15 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * The Character class represents a character in the game. A character needs to be instantiated with a name, a race,
+ * a class name, max hp, strength, endurance, dexterity and speed. All characters start at level 1 and with an empty
+ * inventory. Characters all start with a STARTING_GOLD, but merchants start with twice as much.
  *
+ * The methods in this class can be used to get the various stats of a character including the stats given through
+ * inventory items. There are methods to heal and take damage, increase a players stats, level up, add items to a
+ * character's inventory and a method to check if they are alive.
+ *
+ * @author Arjun
  */
 public class Character {
     private final String name;  // the name of a character

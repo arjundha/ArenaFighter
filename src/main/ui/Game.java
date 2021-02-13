@@ -8,7 +8,11 @@ import java.util.Random;
 import java.util.Scanner;
 
 /**
+ * The Game class is the main handler of gameplay. It requires no parameters, and once a new Game is instantiated it
+ * will begin a new game. This class contains methods for printing menus, printing information, handling shopping,
+ * handling combat and also for handling user input.
  *
+ * @author Arjun
  */
 public class Game {
     private Scanner input;
@@ -538,7 +542,7 @@ public class Game {
         player.levelUp();
         player.increaseStats(player.getClassName());
         System.out.printf("\nYou are now level %d. Your stats have increased, and you gained some gold for winning "
-                + "the fight", player.getLevel());
+                + "the fight.", player.getLevel());
     }
 
     // EFFECTS: Print out detailed information of an arena enemy.

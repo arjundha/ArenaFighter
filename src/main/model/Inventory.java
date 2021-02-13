@@ -5,9 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A representation of a collection of equipment that a character has in their possession.
+ * The Inventory class represents a collection of Equipment objects. An inventory can have as few as
+ * 0 Equipment, to infinitely many. There are methods for getting an Equipment at a certain index, adding equipment,
+ * removing equipment and getting the number of Equipment in an inventory. There are also methods to get the summation
+ * of certain Equipment values of an inventory, like strength, endurance, dexterity or gold.
  *
- *
+ * @author Arjun
  */
 
 // Represents all the equipment currently owned by a player (their inventory of equipment)
