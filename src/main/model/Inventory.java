@@ -64,6 +64,10 @@ public class Inventory {
         return speed;
     }
 
+    public int getInventorySize() {
+        return this.equipment.size();
+    }
+
     //  These two methods were methods that were originally used, but then broken down into different methods.
     // I am keeping them in here in case they may be useful in future phases.
 
@@ -106,7 +110,5 @@ public class Inventory {
         this.equipment.remove(index);
     }
 
-    public int inventorySize() {
-        return this.equipment.size();
-    }
+
 }

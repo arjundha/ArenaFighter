@@ -20,19 +20,19 @@ class InventoryTest {
 
     @Test
     void testEmptyInventorySize() {
-        assertEquals(0, testInventory.inventorySize());
+        assertEquals(0, testInventory.getInventorySize());
     }
 
     @Test
     void testInventoryOneItem() {
-        assertEquals(1, testInventoryWithEquipment.inventorySize());
+        assertEquals(1, testInventoryWithEquipment.getInventorySize());
     }
 
     @Test
     void testInventoryRemoveEquipment() {
-        assertEquals(1, testInventoryWithEquipment.inventorySize());
+        assertEquals(1, testInventoryWithEquipment.getInventorySize());
         testInventoryWithEquipment.removeEquipment(0);
-        assertEquals(0, testInventoryWithEquipment.inventorySize());
+        assertEquals(0, testInventoryWithEquipment.getInventorySize());
     }
 
     @Test
@@ -60,9 +60,9 @@ class InventoryTest {
 
     @Test
     void testAddEquipment() {
-        assertEquals(0, testInventory.inventorySize());
+        assertEquals(0, testInventory.getInventorySize());
         testInventory.addEquipment(testEquipment);
-        assertEquals(1, testInventory.inventorySize());
+        assertEquals(1, testInventory.getInventorySize());
 
         Equipment addedEquipment = testInventory.getEquipment(0);
         assertEquals("testName", addedEquipment.getName());

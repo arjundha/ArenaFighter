@@ -225,10 +225,10 @@ public class Game {
     // MODIFIES: Inventory and Character
     // EFFECTS: Remove an item from a shop inventory and place it in a Character inventory after spending gold
     private void buyItem(Character character, Inventory shop, int item) {
-        if (shop.inventorySize() == 0) {  // Check if the inventory is empty
+        if (shop.getInventorySize() == 0) {  // Check if the inventory is empty
             System.out.println("\nSorry, I am sold out!");
 
-        } else if (0 < item && item <= shop.inventorySize()) {  // Check if the user input is within the options
+        } else if (0 < item && item <= shop.getInventorySize()) {  // Check if the user input is within the options
             int index = item - 1;  // get the index of the element we want
             Equipment equipment = shop.getEquipment(index);
             int cost = equipment.getWorth();  // How much does it cost?
@@ -553,10 +553,10 @@ public class Game {
 
     // EFFECTS: Print out detailed information for each equipment in an inventory
     private void printInventory(Inventory inventory) {
-        if (inventory.inventorySize() == 0) {
+        if (inventory.getInventorySize() == 0) {
             System.out.println("\nMy inventory is empty.");
         } else {
-            for (int i = 0; i < inventory.inventorySize(); i++) {  // Print out each Equipment in an Inventory
+            for (int i = 0; i < inventory.getInventorySize(); i++) {  // Print out each Equipment in an Inventory
                 Equipment item = inventory.getEquipment(i);
                 System.out.printf("\n%d. %s: Strength - %d   Endurance - %d   Dexterity - %d   Speed - %d   VALUE: %d",
                         i + 1,
