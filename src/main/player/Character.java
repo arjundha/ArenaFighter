@@ -10,16 +10,16 @@ import java.util.List;
  *
  */
 public class Character {
-    private String name;  // the name of a character
-    private String race;  // the race of a character (human, dwarf, elf etc.)
-    private String className;  // the class of a character (warrior, rogue, merchant etc.)
+    private final String name;  // the name of a character
+    private final String race;  // the race of a character (human, dwarf, elf etc.)
+    private final String className;  // the class of a character (warrior, rogue, merchant etc.)
     private int level;  // represents the current level of a character
-    private List<Integer> hitpoints;  // HP is a list, where the first index is current, and second is max
+    private final List<Integer> hitpoints;  // HP is a list, where the first index is current, and second is max
     private int strength; // The strength of a character
     private int endurance;  // the endurance of a character
     private int dexterity;  // the dexterity of a character
     private int speed;  // the speed modifier of a weapon
-    private Inventory inventory;  // the inventory of a character
+    private final Inventory inventory;  // the inventory of a character
     private int gold;  // the amount of gold a character has
 
     private static final int STARTING_LEVEL = 1;  // These fields determine what level a character starts at
@@ -189,8 +189,8 @@ public class Character {
     }
 
     // EFFECTS: Returns true if a character is dead (HP is less than or equal to 0)
-    public boolean isDead() {
-        return (this.hitpoints.get(0) <= 0);
+    public boolean isAlive() {
+        return (this.hitpoints.get(0) > 0);
     }
 
     // MODIFIES: This
