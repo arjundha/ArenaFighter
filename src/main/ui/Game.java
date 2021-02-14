@@ -558,7 +558,8 @@ public class Game {
         } else {
             for (int i = 0; i < inventory.getInventorySize(); i++) {  // Print out each Equipment in an Inventory
                 Equipment item = inventory.getEquipment(i);
-                System.out.printf("\n%d. %s: Strength - %d   Endurance - %d   Dexterity - %d   Speed - %d   VALUE: %d",
+                System.out.printf("\n%d. %s: "
+                                 + "\nStrength - %d   Endurance - %d   Dexterity - %d   Speed - %d   VALUE: %d\n",
                         i + 1,
                         item.getName().substring(0, 1).toUpperCase() + item.getName().substring(1),  // Capitalize name
                         item.getStrength(),
