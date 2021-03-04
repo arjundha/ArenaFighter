@@ -43,3 +43,11 @@ As a user, I want to be able to fight different enemies | Yes
 As a user, I want to be able to level up after winning a fight | Yes 
 As a user, I want to my stats to change when I level up | Yes 
 As a user, I want to be able to win the game | Yes 
+
+### Phase 2 - Data Persistence
+User Story | Completed 
+--- | --- 
+As a user, I want my progress to be saved at the end of each level | ---
+As a user, I want to be able to load a saved game | --- 
+As a user, I want to be able to start a new game | --- 
+As a user, I want to be able to quit the game | --- 
