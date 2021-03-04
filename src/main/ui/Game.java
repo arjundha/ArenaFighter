@@ -16,6 +16,7 @@ import java.util.Scanner;
  */
 public class Game {
     private Scanner input;
+    private static final String JSON_SAVE = "./data/workroom.json";
 
     private static final int NUMBER_OF_LEVELS = 5; // This represents the number of levels in the game, it ends when the
     // player level exceeds this number.
