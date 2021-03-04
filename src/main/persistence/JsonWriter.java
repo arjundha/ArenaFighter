@@ -7,7 +7,9 @@ import player.Character;
 import java.io.*;
 
 /**
+ * CITATION: The base code can be found at https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
  * The JsonWriter class is based off the implementation from the CPSC 210 JsonSerializationDemo at UBC.
+ *
  * This class contains all methods necessary for writing a Character and their Inventory/Equipment to a JSON file.
  *
  * @author Arjun

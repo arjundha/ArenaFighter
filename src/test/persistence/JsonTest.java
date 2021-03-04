@@ -5,6 +5,7 @@ import model.Equipment;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
+ * CITATION: The base code can be found at https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
  * The JsonTest class is extended by the two other persistence test files: JsonReaderTest and JsonWriterTest.
  * It is based off the implementation from the CPSC 210 JsonSerializationDemo at UBC.
  * The method in this file is used to check if an Equipment object from JSON matches the expected parameters.

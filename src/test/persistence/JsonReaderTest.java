@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
+ * CITATION: The base code can be found at https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
  * The JsonReaderTest class is based off the implementation from the CPSC 210 JsonSerializationDemo at UBC.
  *
  * @author Arjun

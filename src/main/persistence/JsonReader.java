@@ -11,7 +11,9 @@ import org.json.*;
 import player.Character;
 
 /**
+ * CITATION: The base code can be found at https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
  * The JsonReader class is based off the implementation from the CPSC 210 JsonSerializationDemo at UBC.
+ *
  * This class contains all methods necessary for reading a Character and their Inventory/Equipment from a JSON file.
  *
  * @author Arjun
