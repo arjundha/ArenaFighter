@@ -6,7 +6,14 @@ import player.Character;
 
 import java.io.*;
 
-// Represents a writer that writes JSON representation of workroom to file
+/**
+ * The JsonWriter class is based off the implementation from the CPSC 210 JsonSerializationDemo at UBC.
+ * This class contains all methods necessary for writing a Character and their Inventory/Equipment to a JSON file.
+ *
+ * @author Arjun
+ */
+
+// Represents a writer that writes JSON representation of Character to file
 public class JsonWriter {
     private static final int TAB = 4;
     private PrintWriter writer;
