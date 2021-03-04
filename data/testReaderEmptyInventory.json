@@ -1,0 +1,14 @@
+{
+    "inventory": [],
+    "name": "test name",
+    "race": "human",
+    "className": "warrior",
+    "level": 1,
+    "currentHP": 10,
+    "maxHP": 10,
+    "strength": 11,
+    "endurance": 12,
+    "dexterity": 13,
+    "speed": 14,
+    "gold": 100
+}

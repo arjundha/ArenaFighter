@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 import model.Equipment;
-import model.Inventory;
 import org.json.*;
 import player.Character;
 
@@ -44,29 +43,29 @@ public class JsonReader {
         String name = jsonObject.getString("name");
         String race = jsonObject.getString("race");
         String className = jsonObject.getString("className");
-        int level = Integer.parseInt(jsonObject.getString("level"));
-        int currentHP = Integer.parseInt(jsonObject.getString("currentHP"));
-        int maxHP = Integer.parseInt(jsonObject.getString("maxHP"));
-        int str = Integer.parseInt(jsonObject.getString("strength"));
-        int end = Integer.parseInt(jsonObject.getString("endurance"));
-        int dex = Integer.parseInt(jsonObject.getString("dexterity"));
-        int speed = Integer.parseInt(jsonObject.getString("speed"));
+        int level = jsonObject.getInt("level");
+        int currentHP = jsonObject.getInt("currentHP");
+        int maxHP = jsonObject.getInt("maxHP");
+        int str = jsonObject.getInt("strength");
+        int end = jsonObject.getInt("endurance");
+        int dex = jsonObject.getInt("dexterity");
+        int speed = jsonObject.getInt("speed");
 //        Integer inventory = Integer.parseInt(jsonObject.getString("level"));
 
-        int gold = Integer.parseInt(jsonObject.getString("gold"));
+        int gold = jsonObject.getInt("gold");
 
         Character c = new Character(name, race, className, level, currentHP, maxHP, str, end, dex, speed, gold);
-        addThingies(c, jsonObject);
+        buildInventory(c, jsonObject);
         return c;
     }
 
     // MODIFIES: wr
     // EFFECTS: parses thingies from JSON object and adds them to workroom
-    private void addThingies(Character c, JSONObject jsonObject) {
-        JSONArray jsonArray = jsonObject.getJSONArray("thingies");
+    private void buildInventory(Character c, JSONObject jsonObject) {
+        JSONArray jsonArray = jsonObject.getJSONArray("inventory");
         for (Object json : jsonArray) {
-            JSONObject nextThingy = (JSONObject) json;
-            addEquipment(c, nextThingy);
+            JSONObject item = (JSONObject) json;
+            addEquipment(c, item);
         }
     }
 
