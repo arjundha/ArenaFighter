@@ -2,8 +2,12 @@ package ui;
 
 import model.Equipment;
 import model.Inventory;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 import player.Character;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -17,6 +21,9 @@ import java.util.Scanner;
 public class Game {
     private Scanner input;
     private static final String JSON_SAVE = "./data/workroom.json";
+    private JsonWriter jsonWriter;
+    private JsonReader jsonReader;
+    private Character player;
 
     private static final int NUMBER_OF_LEVELS = 5; // This represents the number of levels in the game, it ends when the
     // player level exceeds this number.
@@ -38,14 +45,20 @@ public class Game {
 
 
     // EFFECTS: runs the game application
-    public Game() {
-        runGame();
+    public Game() throws FileNotFoundException {
+        jsonWriter = new JsonWriter(JSON_SAVE);  // we need to check right away if the save file exists
+        jsonReader = new JsonReader(JSON_SAVE);
+        runNewGame();
+    }
+
+    private void setUpGame() {
+
     }
 
     // MODIFIES: this
     // EFFECTS: Handles and processes user input to initialize a game
-    private void runGame() {
-        Character player = createCharacter();  // Begin the game by creating a character
+    private void runNewGame() {
+        player = createCharacter();  // Begin the game by creating a character
         boolean alive = true;  // sentinel value for if the player is alive
         input = new Scanner(System.in);
 
@@ -605,6 +618,33 @@ public class Game {
 
         } catch (Exception e) {  // Catch the error if it is not able to be parsed, and return false
             return false;
+        }
+    }
+
+    // EFFECTS: saves the Character to the save file
+    // CITATION: The base code can be found at https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+    //           This method is implemented using the CPSC 210 JsonSerializationDemo as it's base code.
+    private void saveWorkRoom() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(player);
+            jsonWriter.close();
+            System.out.println("Saved your character " + player.getName() + " to " + JSON_SAVE);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + JSON_SAVE);
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: loads Character from the save file
+    // CITATION: The base code can be found at https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+    //           This method is implemented using the CPSC 210 JsonSerializationDemo as it's base code.
+    private void loadWorkRoom() {
+        try {
+            player = jsonReader.read();
+            System.out.println("Loaded your character " + player.getName() + " from " + JSON_SAVE);
+        } catch (IOException e) {
+            System.out.println("Unable to read from file: " + JSON_SAVE);
         }
     }
 }
