@@ -9,6 +9,12 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * The JsonReaderTest class is based off the implementation from the CPSC 210 JsonSerializationDemo at UBC.
+ *
+ * @author Arjun
+ */
+
 public class JsonReaderTest extends JsonTest{
 
     @Test

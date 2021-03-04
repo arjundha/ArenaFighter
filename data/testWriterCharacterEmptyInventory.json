@@ -1,0 +1,14 @@
+{
+    "dexterity": 13,
+    "gold": 50,
+    "maxHP": 10,
+    "currentHP": 10,
+    "race": "human",
+    "strength": 11,
+    "level": 1,
+    "name": "test",
+    "className": "warrior",
+    "endurance": 12,
+    "inventory": [],
+    "speed": 14
+}

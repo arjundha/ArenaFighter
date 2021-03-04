@@ -1,0 +1,31 @@
+{
+    "dexterity": 13,
+    "gold": 50,
+    "maxHP": 10,
+    "currentHP": 10,
+    "race": "human",
+    "strength": 11,
+    "level": 1,
+    "name": "test",
+    "className": "warrior",
+    "endurance": 12,
+    "inventory": [
+        {
+            "dexterity": 6,
+            "strength": 8,
+            "name": "testItem",
+            "endurance": 7,
+            "speed": 5,
+            "worth": 400
+        },
+        {
+            "dexterity": 3,
+            "strength": 1,
+            "name": "testItem2",
+            "endurance": 2,
+            "speed": 4,
+            "worth": 5
+        }
+    ],
+    "speed": 14
+}
