@@ -1,8 +1,12 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import player.Character;
+
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -253,4 +257,38 @@ public class CharacterTest {
         assertEquals(13 + Character.UNFAVOURABLE_STAT_INCREASE, testMerchant.getDexterity());
         assertEquals(14 + Character.UNFAVOURABLE_STAT_INCREASE, testMerchant.getSpeed());
     }
+
+//    assertEquals("test warrior", testWarrior.getName());
+//    assertEquals("human", testWarrior.getRace());
+//    assertEquals("warrior", testWarrior.getClassName());
+//    assertEquals(10, testWarrior.getCurrentHealth());
+//    assertEquals(10, testWarrior.getMaxHealth());
+//    assertEquals(11, testWarrior.getStrength());
+//    assertEquals(12, testWarrior.getEndurance());
+//    assertEquals(13, testWarrior.getDexterity());
+//    assertEquals(14, testWarrior.getSpeed());
+//    assertEquals(Character.STARTING_LEVEL, testWarrior.getLevel());
+//    assertEquals(Character.STARTING_GOLD, testWarrior.getGold());
+//    assertEquals(0, testWarrior.getInventory().getInventorySize());
+    @Test
+    void testToJson() {
+        JSONObject json = testWarrior.toJson();
+        JSONObject test = new JSONObject();
+
+        test.put("name", "test warrior");
+        test.put("race", "human");
+        test.put("className", "warrior");
+        test.put("level", Character.STARTING_LEVEL);
+        test.put("currentHP", 10);
+        test.put("maxHP", 10);
+        test.put("strength", 11);
+        test.put("endurance", 12);
+        test.put("dexterity", 13);
+        test.put("speed", 14);
+        test.put("inventory", new JSONArray());
+        test.put("gold", Character.STARTING_GOLD);
+
+        assertEquals(test.toString(), json.toString());
+    }
+
 }

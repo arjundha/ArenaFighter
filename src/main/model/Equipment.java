@@ -1,5 +1,8 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Writable;
+
 /**
  * The Equipment class is a representation of items that can bought and used by a
  * player to modify their stats. Each equipment has a name, and values for their strength,
@@ -15,7 +18,7 @@ package model;
  */
 
 // Represents equipment that can be bought and used by a player to modify their stats
-public class Equipment {
+public class Equipment implements Writable {
     private final String name;  // The name of a weapon
     private final int strength; // The damage modifier of a weapon
     private final int endurance;  // the endurance modifier of a weapon
@@ -61,5 +64,20 @@ public class Equipment {
     // EFFECTS: returns the worth in gold of an equipment item
     public int getWorth() {
         return this.worth;
+    }
+
+    // EFFECTS: produces an Equipment as a JSON
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+
+        json.put("name", name);
+        json.put("strength", strength);
+        json.put("endurance", endurance);
+        json.put("dexterity", dexterity);
+        json.put("speed", speed);
+        json.put("worth", worth);
+
+        return json;
     }
 }

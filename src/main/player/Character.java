@@ -2,7 +2,12 @@ package player;
 
 import model.Equipment;
 import model.Inventory;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,7 +22,7 @@ import java.util.List;
  *
  * @author Arjun
  */
-public class Character {
+public class Character implements Writable {
     private final String name;  // the name of a character
     private final String race;  // the race of a character (human, dwarf, elf etc.)
     private final String className;  // the class of a character (warrior, rogue, merchant etc.)
@@ -64,6 +69,21 @@ public class Character {
         } else {
             this.gold = STARTING_GOLD;
         }
+    }
+
+    public Character(String name, String race, String className, int level,
+                     int currentHP, int maxHP, int str, int end, int dex, int spd, int gold) {
+        this.name = name;
+        this.race = race;
+        this.className = className;
+        this.level = level;
+        this.hitpoints = Arrays.asList(currentHP, maxHP); // HP is a list
+        this.strength = str;
+        this.endurance = end;
+        this.dexterity = dex;
+        this.speed = spd;
+        this.inventory = new Inventory();  // this gets built in persistence
+        this.gold = gold;
     }
 
     // EFFECTS: Produce the name of a character
@@ -207,6 +227,38 @@ public class Character {
     public void equipItem(Equipment item) {
         this.inventory.addEquipment(item);
     }
+
+    // EFFECTS: Produce a JSON corresponding to the current character's data
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+
+        json.put("name", name);
+        json.put("race", race);
+        json.put("className", className);
+        json.put("level", level);
+        json.put("currentHP", getCurrentHealth());
+        json.put("maxHP", getMaxHealth());
+        json.put("strength", strength);
+        json.put("endurance", endurance);
+        json.put("dexterity", dexterity);
+        json.put("speed", speed);
+        json.put("inventory", inventoryToJson());
+        json.put("gold", gold);
+
+        return json;
+    }
+
+    private JSONArray inventoryToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (int i = 0; i < inventory.getInventorySize(); i++) {
+            Equipment item = inventory.getEquipment(i);
+            jsonArray.put(item.toJson());
+        }
+        return jsonArray;
+    }
+
 }
 
 
