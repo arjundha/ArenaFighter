@@ -73,11 +73,11 @@ public class JsonReader {
     // EFFECTS: parses equipment from JSON object and adds it to the inventory
     private void addEquipment(Character c, JSONObject jsonObject) {
         String name = jsonObject.getString("name");
-        int strength = Integer.parseInt(jsonObject.getString("strength"));
-        int endurance = Integer.parseInt(jsonObject.getString("endurance"));
-        int dexterity = Integer.parseInt(jsonObject.getString("dexterity"));
-        int speed = Integer.parseInt(jsonObject.getString("speed"));
-        int worth = Integer.parseInt(jsonObject.getString("worth"));
+        int strength = jsonObject.getInt("strength");
+        int endurance = jsonObject.getInt("endurance");
+        int dexterity = jsonObject.getInt("dexterity");
+        int speed = jsonObject.getInt("speed");
+        int worth = jsonObject.getInt("worth");
         Equipment item = new Equipment(name, strength, endurance, dexterity, speed, worth);
         c.equipItem(item);
     }

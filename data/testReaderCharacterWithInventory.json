@@ -1,0 +1,31 @@
+{
+    "inventory": [
+        {
+            "name": "axe",
+            "strength": "2",
+            "endurance": "1",
+            "dexterity": "0",
+            "speed": "0",
+            "worth": "10"
+        },
+        {
+          "name": "wand",
+          "strength": "0",
+          "endurance": "1",
+          "dexterity": "2",
+          "speed": "10",
+          "worth": "100"
+        }
+    ],
+    "name": "test inventory character",
+    "race": "human",
+    "className": "warrior",
+    "level": 1,
+    "currentHP": 10,
+    "maxHP": 10,
+    "strength": 11,
+    "endurance": 12,
+    "dexterity": 13,
+    "speed": 14,
+    "gold": 100
+}

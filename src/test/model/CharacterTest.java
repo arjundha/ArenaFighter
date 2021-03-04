@@ -6,8 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import player.Character;
 
-import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CharacterTest {
@@ -258,18 +256,6 @@ public class CharacterTest {
         assertEquals(14 + Character.UNFAVOURABLE_STAT_INCREASE, testMerchant.getSpeed());
     }
 
-//    assertEquals("test warrior", testWarrior.getName());
-//    assertEquals("human", testWarrior.getRace());
-//    assertEquals("warrior", testWarrior.getClassName());
-//    assertEquals(10, testWarrior.getCurrentHealth());
-//    assertEquals(10, testWarrior.getMaxHealth());
-//    assertEquals(11, testWarrior.getStrength());
-//    assertEquals(12, testWarrior.getEndurance());
-//    assertEquals(13, testWarrior.getDexterity());
-//    assertEquals(14, testWarrior.getSpeed());
-//    assertEquals(Character.STARTING_LEVEL, testWarrior.getLevel());
-//    assertEquals(Character.STARTING_GOLD, testWarrior.getGold());
-//    assertEquals(0, testWarrior.getInventory().getInventorySize());
     @Test
     void testToJson() {
         JSONObject json = testWarrior.toJson();
