@@ -2,12 +2,14 @@ package ui;
 
 import model.Equipment;
 import model.Inventory;
+import org.json.JSONException;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 import player.Character;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -20,9 +22,9 @@ import java.util.Scanner;
  */
 public class Game {
     private Scanner input;
-    private static final String JSON_SAVE = "./data/workroom.json";
-    private JsonWriter jsonWriter;
-    private JsonReader jsonReader;
+    private static final String JSON_SAVE = "./data/save.json";
+    private final JsonWriter jsonWriter;
+    private final JsonReader jsonReader;
     private Character player;
 
     private static final int NUMBER_OF_LEVELS = 5; // This represents the number of levels in the game, it ends when the
@@ -43,38 +45,104 @@ public class Game {
     private static final int HEALTH_FROM_LARGE_POTION = 25;  // Amount of health healed from a large potion
     private static final int DEXTERITY_ROLL = 60; // Used for determining if an attack will miss (DEX > RANDOM_INT)
 
-
     // EFFECTS: runs the game application
-    public Game() throws FileNotFoundException {
+    public Game() {
         jsonWriter = new JsonWriter(JSON_SAVE);  // we need to check right away if the save file exists
         jsonReader = new JsonReader(JSON_SAVE);
-        runNewGame();
+        setUpGame();
     }
 
+    // EFFECTS: Controls the main menu of the game, allowing players to load an old game or start new.
     private void setUpGame() {
+        System.out.println("\r  ___                        ______ _       _     _            \n"
+                + " / _ \\                       |  ___(_)     | |   | |           \n"
+                + "/ /_\\ \\_ __ ___ _ __   __ _  | |_   _  __ _| |__ | |_ ___ _ __ \n"
+                + "|  _  | '__/ _ | '_ \\ / _` | |  _| | |/ _` | '_ \\| __/ _ | '__|\n"
+                + "| | | | | |  __| | | | (_| | | |   | | (_| | | | | ||  __| |   \n"
+                + "\\_| |_|_|  \\___|_| |_|\\__,_| \\_|   |_|\\__, |_| |_|\\__\\___|_|   \n"
+                + "                                       __/ |                   \n"
+                + "                                      |___/                    ");
 
+        input = new Scanner(System.in);
+        boolean sentinel = true;
+        while (sentinel) {
+            printSetUpMenu();
+            String command = input.nextLine().trim();
+            if (command.equals("3")) {
+                sentinel = false;
+            } else {
+                handleSetUpSelection(command);
+            }
+        }
+        System.out.println("\nClosing the game.");
+    }
+
+    // EFFECTS: Print the main menu options for the player
+    private void printSetUpMenu() {
+        System.out.println("\nMENU");
+        System.out.println("1) New Game - this may overwrite any saved data you have.");
+        System.out.println("2) Load Game - continue from where you left off.");
+        System.out.println("3) Quit - close the application.");
     }
 
     // MODIFIES: this
-    // EFFECTS: Handles and processes user input to initialize a game
-    private void runNewGame() {
-        player = createCharacter();  // Begin the game by creating a character
+    // EFFECTS: Handles the input from the player and directs to the corresponding function
+    private void handleSetUpSelection(String selection) {
+        switch (selection) {
+            case "1":
+                player = createCharacter(); // Start a new character
+                runGame();
+                break;
+
+            case "2":
+                loadCharacter(); // Begin the game with your loaded character
+
+                if (Objects.isNull(player)) { // We don't want to continue if we failed to load the game
+                    break;
+                }
+
+                runGame();
+                break;
+
+            default:
+                System.out.println("\nPlease select a valid option.\n");
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Handles and processes user input to initialize a game with Character
+    private void runGame() {
         boolean alive = true;  // sentinel value for if the player is alive
+        boolean quit = false;  // A check to see if the player chose to quit the game
         input = new Scanner(System.in);
 
         while (alive && player.getLevel() <= NUMBER_OF_LEVELS) { // If the character is dead, we want to end the loop
             printMenu();
             String command = input.nextLine().trim();
-            handleMenuSelection(player, command);
+            if (command.equals("7")) {
+                saveCharacter();
+            } else if (command.equals("8")) {
+                quit = true;
+                break; // lets get out of this while loop!
+            } else {
+                handleMenuSelection(player, command);
+            }
             alive = player.isAlive();  // Check if we should quit the loop
         }
+        if (quit) {
+            System.out.println("\nReturning to main menu.");
+        } else {
+            gameOver();
+        }
+    }
 
+    // EFFECTS: Handles the end of the game, and checks to see if the player one or lost
+    private void gameOver() {
         if (player.isAlive()) {  // If the while loop ended and the player is alive
             System.out.println("\nYou are now the champion of the arena!");
         } else {
             System.out.println("\nYou have died.");
         }
-
         System.out.println("\nThank you for playing!");
     }
 
@@ -174,6 +242,8 @@ public class Game {
         System.out.println("\t4) View my current stats.");
         System.out.println("\t5) View my current inventory.");
         System.out.println("\t6) Fight!");
+        System.out.println("\t7) Save Game");
+        System.out.println("\t8) Quit");
     }
 
     // EFFECTS: Handles the input from the player and directs to the corresponding function
@@ -624,7 +694,7 @@ public class Game {
     // EFFECTS: saves the Character to the save file
     // CITATION: The base code can be found at https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
     //           This method is implemented using the CPSC 210 JsonSerializationDemo as it's base code.
-    private void saveWorkRoom() {
+    private void saveCharacter() {
         try {
             jsonWriter.open();
             jsonWriter.write(player);
@@ -639,12 +709,16 @@ public class Game {
     // EFFECTS: loads Character from the save file
     // CITATION: The base code can be found at https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
     //           This method is implemented using the CPSC 210 JsonSerializationDemo as it's base code.
-    private void loadWorkRoom() {
+    private void loadCharacter() {
         try {
             player = jsonReader.read();
             System.out.println("Loaded your character " + player.getName() + " from " + JSON_SAVE);
+
         } catch (IOException e) {
             System.out.println("Unable to read from file: " + JSON_SAVE);
+
+        } catch (JSONException e) {
+            System.out.println("Unable to read from file: " + JSON_SAVE + ". The data may be corrupted.");
         }
     }
 }
