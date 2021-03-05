@@ -47,7 +47,8 @@ As a user, I want to be able to win the game | Yes
 ### Phase 2 - Data Persistence
 User Story | Completed 
 --- | --- 
-As a user, I want my progress to be saved at the end of each level | ---
-As a user, I want to be able to load a saved game | --- 
-As a user, I want to be able to start a new game | --- 
-As a user, I want to be able to quit the game | --- 
+As a user, I want to be able to save my progress | Yes
+As a user, I want to be able to load a saved game | Yes 
+As a user, I want to be able to start a new game | Yes 
+As a user, I want to be able to quit the game | Yes 
+As a user, I want to be greeted with a Main Menu on start | Yes 
