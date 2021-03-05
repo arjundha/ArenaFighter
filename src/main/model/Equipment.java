@@ -66,7 +66,9 @@ public class Equipment implements Writable {
         return this.worth;
     }
 
-    // EFFECTS: produces an Equipment as a JSON
+    // EFFECTS: produces an Equipment as a JSONObject
+    // CITATION: The base code can be found at https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+    //           This method is implemented using the CPSC 210 JsonSerializationDemo as it's base code.
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();

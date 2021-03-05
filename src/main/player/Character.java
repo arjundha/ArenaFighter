@@ -229,6 +229,8 @@ public class Character implements Writable {
     }
 
     // EFFECTS: Produce a JSON corresponding to the current character's data
+    // CITATION: The base code can be found at https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+    //           This method is implemented using the CPSC 210 JsonSerializationDemo as it's base code.
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
@@ -249,6 +251,9 @@ public class Character implements Writable {
         return json;
     }
 
+    // EFFECTS: Produce a JSONArray to represent a Character's inventory
+    // CITATION: The base code can be found at https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+    //           This method is implemented using the CPSC 210 JsonSerializationDemo as it's base code.
     private JSONArray inventoryToJson() {
         JSONArray jsonArray = new JSONArray();
 
