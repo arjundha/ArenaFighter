@@ -46,7 +46,7 @@ public class Game {
     private static final int DEXTERITY_ROLL = 60; // Used for determining if an attack will miss (DEX > RANDOM_INT)
 
     // EFFECTS: runs the game application
-    public Game() {
+    public Game() throws FileNotFoundException {
         jsonWriter = new JsonWriter(JSON_SAVE);  // we need to check right away if the save file exists
         jsonReader = new JsonReader(JSON_SAVE);
         setUpGame();
