@@ -122,7 +122,7 @@ public class Game {
             if (command.equals("7")) {
                 saveCharacter();
             } else if (command.equals("8")) {
-                quit = true;
+                quit = saveBeforeQuit();
                 break; // lets get out of this while loop!
             } else {
                 handleMenuSelection(player, command);
@@ -133,6 +133,25 @@ public class Game {
             System.out.println("\nReturning to main menu.");
         } else {
             gameOver();
+        }
+    }
+
+    // EFFECTS: Prompts the player to save the game before they quit
+    private boolean saveBeforeQuit() {
+        input = new Scanner(System.in);
+        while (true) {
+            System.out.println("Do you want to save before you quit?");
+            System.out.println("\t1) Yes");
+            System.out.println("\t2) No");
+            String command = input.nextLine().trim();
+            if (command.equals("1")) {
+                saveCharacter();
+                return true;
+            } else if (command.equals("2")) {
+                return true;
+            } else {
+                System.out.println("Please choose a valid option");
+            }
         }
     }
 
