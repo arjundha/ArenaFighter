@@ -51,4 +51,5 @@ As a user, I want to be able to save my progress | Yes
 As a user, I want to be able to load a saved game | Yes 
 As a user, I want to be able to start a new game | Yes 
 As a user, I want to be able to quit the game | Yes 
+As a user, I want to be reminded to save the game before I quit | Yes 
 As a user, I want to be greeted with a Main Menu on start | Yes 
