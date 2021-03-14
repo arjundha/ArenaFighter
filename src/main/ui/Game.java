@@ -7,9 +7,10 @@ import player.Character;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Scanner;
 
 /**
  * The Game class is the main handler of gameplay. It requires no parameters, and once a new Game is
@@ -28,6 +29,9 @@ public class Game extends JFrame {
     private static final Color BACKGROUND = Color.DARK_GRAY;
     private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 50);
     private static final Font NORMAL_FONT = new Font("Arial", Font.PLAIN, 25);
+
+    private JPanel mainArea;
+    private JTextArea mainTextArea;
 
     private static final String JSON_SAVE = "./data/save.json";
     private final JsonWriter jsonWriter;
@@ -55,7 +59,7 @@ public class Game extends JFrame {
 
     private void startScreen() {
         createTitle();
-        createStartButtons();
+        generateStartMenu();
     }
 
     private void createTitle() {
@@ -71,13 +75,15 @@ public class Game extends JFrame {
         getContentPane().add(titlePanel);
     }
 
-    private void createStartButtons() {
+    private void generateStartMenu() {
         JPanel newGame = new JPanel();
         newGame.setBounds(100, 500, 600, 80);
         newGame.setBackground(BACKGROUND);
 
         JButton newGameButton = createMainMenuButton("NEW GAME");
+        newGameButton.addActionListener(new StartNewGameHandler());
         JButton loadGameButton = createMainMenuButton("LOAD GAME");
+        loadGameButton.addActionListener(new LoadGameHandler());
 
         newGame.add(newGameButton);
         newGame.add(Box.createHorizontalStrut(100));
@@ -94,6 +100,77 @@ public class Game extends JFrame {
 
         return button;
     }
+
+    private class StartNewGameHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            player = createCharacter();
+            runGame();
+        }
+    }
+
+    private Character createCharacter() {
+        return new Character("Arjun", "human", "merchant", 10, 10, 10,10, 10);
+    }
+
+    private class LoadGameHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            loadCharacter();
+            runGame();
+        }
+    }
+
+    private void runGame() {
+        getContentPane().removeAll();
+        getContentPane().repaint();
+        generateHeader();
+        generateGameScreen();
+    }
+
+    private void generateGameScreen() {
+        mainArea = new JPanel();
+        mainArea.setBounds(100, 100, 600, 250);
+        mainArea.setBackground(Color.blue);
+        getContentPane().add(mainArea);
+
+        mainTextArea = new JTextArea();
+        mainTextArea.setBounds(100, 100, 600, 250);
+        mainTextArea.setBackground(Color.BLACK);
+        mainTextArea.setForeground(Color.WHITE);
+        mainTextArea.setFont(NORMAL_FONT);
+        mainTextArea.setLineWrap(true);
+        mainArea.add(mainTextArea);
+    }
+
+    private void generateHeader() {
+        JPanel header = new JPanel();
+        header.setBounds(0,0, WIDTH, 50);
+        header.setLayout(new BoxLayout(header, BoxLayout.X_AXIS));
+        header.setBackground(Color.GRAY);
+        fillHeader(header);
+        getContentPane().add(header);
+    }
+
+    private void fillHeader(JPanel header) {
+        header.add(createHeaderLabel(String.format("  %s", player.getName())));
+        header.add(Box.createGlue());
+        header.add(createHeaderLabel(String.format("Level: %d", player.getLevel())));
+        header.add(Box.createGlue());
+        header.add(createHeaderLabel(String.format("HP: %d/%d", player.getCurrentHealth(), player.getMaxHealth())));
+        header.add(Box.createGlue());
+        header.add(createHeaderLabel(String.format("Gold: %d   ", player.getGold())));
+    }
+
+    private JLabel createHeaderLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setForeground(Color.BLACK);
+        label.setFont(NORMAL_FONT);
+
+        return label;
+    }
+
+
 
     // MODIFIES: this
     // EFFECTS: loads Character from the save file
