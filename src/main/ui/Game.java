@@ -223,15 +223,38 @@ public class Game extends JFrame {
     private JButton saveButton() {
         JButton button = createMenuButton();
         button.setText("7) Save");
-        button.addActionListener(new ShopHandler());
+        button.addActionListener(new SaveHandler());
         return button;
+    }
+
+    private class SaveHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            saveCharacter();
+        }
     }
 
     private JButton quitButton() {
         JButton button = createMenuButton();
         button.setText("8) Quit");
-        button.addActionListener(new ShopHandler());
+        button.addActionListener(new QuitHandler());
         return button;
+    }
+
+    private class QuitHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int opt = JOptionPane.showConfirmDialog(null,
+                    "Would you like to save before you quit?", "Save Before Quit?", JOptionPane.YES_NO_OPTION);
+            if (opt == 0) {
+                saveCharacter();
+                setVisible(false); //you can't see me!
+                dispose();
+            } else if (opt == 1) {
+                setVisible(false); //you can't see me!
+                dispose();
+            }
+        }
     }
 
     private void generateTextArea() {
@@ -275,7 +298,20 @@ public class Game extends JFrame {
         return label;
     }
 
-
+    // EFFECTS: saves the Character to the save file
+    // CITATION: The base code can be found at https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+    //           This method is implemented using the CPSC 210 JsonSerializationDemo as it's base code.
+    private void saveCharacter() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(player);
+            jsonWriter.close();
+            JOptionPane.showMessageDialog(this,
+                    "Saved your character " + player.getName() + " to " + JSON_SAVE);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + JSON_SAVE);
+        }
+    }
 
     // MODIFIES: this
     // EFFECTS: loads Character from the save file
@@ -284,7 +320,8 @@ public class Game extends JFrame {
     private void loadCharacter() {
         try {
             player = jsonReader.read();
-            System.out.println("Loaded your character " + player.getName() + " from " + JSON_SAVE);
+            JOptionPane.showMessageDialog(this,
+                    "Loaded your character " + player.getName() + " from " + JSON_SAVE);
 
         } catch (IOException e) {
             System.out.println("Unable to read from file: " + JSON_SAVE);
