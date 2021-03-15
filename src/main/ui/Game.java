@@ -14,7 +14,6 @@ import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Random;
-import java.util.Scanner;
 
 /**
  * The Game class is the main handler of gameplay. It requires no parameters, and once a new Game is
@@ -32,10 +31,9 @@ public class Game extends JFrame {
     private static final int HEIGHT = 700;
     private static final Color BACKGROUND = Color.DARK_GRAY;
     private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 50);
-    private static final Font NORMAL_FONT = new Font("Arial", Font.PLAIN, 21);
+    public static final Font NORMAL_FONT = new Font("Arial", Font.PLAIN, 21);
 
     private JPanel header;
-    private JPanel mainArea;
     private JPanel menuArea;
     private JTextArea mainTextArea;
     private JScrollPane scrollPane;
@@ -128,7 +126,7 @@ public class Game extends JFrame {
         getContentPane().add(newGame);
     }
 
-    // EFFECTS: creates a button to be used in menues
+    // EFFECTS: creates a button to be used in menus
     private JButton createMenuButton() {
         JButton button = new JButton();
         button.setBackground(Color.white);
@@ -143,15 +141,123 @@ public class Game extends JFrame {
     private class StartNewGameHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            player = createCharacter();
-            runGame();
+            createCharacter();  // Start making a new character!
         }
     }
 
-    // MODIFIES: player
-    // EFFECTS: generates a new player character for the user to use in the game
-    private Character createCharacter() {
-        return new Character("Arjun", "human", "merchant", 10, 10, 10,10, 10);
+    // MODIFIES: this
+    // EFFECTS: set up the GUI for creation of a character
+    private void createCharacter() {
+        getContentPane().removeAll();
+        getContentPane().repaint();
+        createCharacterScreen();
+        choosePlayerName();
+    }
+
+    // MODIFIES: this
+    // EFFECTS: instantiate a new screen for character creation
+    private void createCharacterScreen() {
+        generateTextArea();
+        generateMenu();
+        clear();  // ensure its empty
+    }
+
+    // MODIFIES: this
+    // EFFECTS: creates a screen where players can input a name for their character
+    private void choosePlayerName() {
+        mainTextArea.append("\n\"Ah, hello newcomer! You must be here to register in the arena.\"\n\"Before you can get"
+                + " started, I just have to fill out some paperwork.\"\n\"What is your name?\"\n");
+        JTextField text = new JTextField("Arjun");
+        text.setBackground(Color.pink);  // function below will get name when enter is pressed and take to race sel scn
+        text.addActionListener(e -> chooseRace(text.getText().trim())); // anon function
+        menuArea.add(text);
+        refresh();
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Produce a race based on user selection
+    private void chooseRace(String name) {
+        menuArea.removeAll();
+        refresh();
+        mainTextArea.append(String.format("\n\"Lovely to meet you, %s! Now... what is your race?\"", name));
+        mainTextArea.append("\nAre you a...\nHuman - a jack of all trades, but a master of none."
+                + "\nDwarf - strong and durable. (Start with high HP, strength and endurance)"
+                + "\nElf - quick and nimble. (Start with high dexterity and speed)\n");
+        menuArea.add(selectRaceButton("Human", name));  // buttons for each playable race
+        menuArea.add(selectRaceButton("Dwarf", name));
+        menuArea.add(selectRaceButton("Elf", name));
+        refresh();
+    }
+
+    // EFFECTS: creates a button that allows users to select a race and continue character creation
+    private JButton selectRaceButton(String selection, String name) {
+        JButton button = createMenuButton();
+        button.setText(selection);  // function below takes them to the class selection screen
+        button.addActionListener(e -> chooseClass(name, selection.toLowerCase()));  // anon function
+        return button;
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Produce a class user selection screen
+    private void chooseClass(String name, String race) {
+        menuArea.removeAll();
+        refresh();
+        mainTextArea.append(String.format("\n\"%s? I could tell, I just didn't want to assume anything.\""
+                        + "\n\"Finally, just one last question before we can get you started!\"\n",
+                race.substring(0, 1).toUpperCase() + race.substring(1)));
+        mainTextArea.append("\n\"What class are you?\"\nWarrior - these brutes gain the most HP, "
+                + "strength and endurance.\nRogue - as masters of stealth, "
+                + "rogues have the highest dexterity \nand speed growth."
+                + "\nMerchant - while they may be generally weak in ever regard, "
+                + "merchants \nstart with the most gold, and also gain more gold than other classes.\n");
+        menuArea.add(selectClassButton("Warrior", name, race));  // add the three buttons
+        menuArea.add(selectClassButton("Rogue", name, race));
+        menuArea.add(selectClassButton("Merchant", name, race));
+        refresh();
+    }
+
+    // EFFECTS: creates a button that allows users to select a player class and finish character creation
+    private JButton selectClassButton(String selection, String name, String race) {
+        JButton button = createMenuButton();
+        button.setText(selection);  // the function below will generate a new character and then take to next screen
+        button.addActionListener(e -> generateCharacter(name, race, selection.toLowerCase()));  // anon function
+        return button;
+    }
+
+    // EFFECTS: creates a new player Character object
+    private void generateCharacter(String name, String race, String playerClass) {
+        if (race.equals("human")) {
+            player = new Character(name, race, playerClass, 10, 10, 10, 10, 10);
+
+        } else if (race.equals("dwarf")) {
+            player = new Character(name, race, playerClass, 12, 12, 12, 7, 7);
+
+        } else {
+            player = new Character(name, race, playerClass, 8, 8, 8, 14, 12);
+        }
+        startNewGame();
+    }
+
+    // MODIFIES: this
+    // EFFECTS: creates a screen where players can pause before starting the game
+    private void startNewGame() {
+        menuArea.removeAll();
+        refresh();
+        mainTextArea.append(String.format("\n\"A %s %s, haven't seen one of those before!\"\n"
+                        + "\"Well, good luck in there %s!\"\n",
+                player.getClassName(), player.getRace(), player.getName()));
+        mainTextArea.append("And with that, they hand you your arena registration and gesture you "
+                + "\ntoward the arena.\n");
+        menuArea.add(enterArena());  // add the button
+        refresh();
+    }
+
+    // EFFECTS: creates a button that allows users to enter the arena/main screen of the game
+    private JButton enterArena() {
+        JButton button = createMenuButton();
+        button.setText("ENTER THE ARENA");
+        button.addActionListener(e -> runGame());  // takes them to the main game screen
+        return button;
     }
 
     // EFFECTS: adds functionality to the load game button
@@ -175,19 +281,15 @@ public class Game extends JFrame {
     // MODIFIES: this
     // EFFECTS: generates the panel for game dialog to be displayed
     private void generateGameScreen() {
-        mainArea = new JPanel();
-        mainArea.setBounds(50, 50, 700, 370);
-        mainArea.setBackground(Color.blue);
         generateTextArea();
         generateMenu();
-
     }
 
     // MODIFIES: this
     // EFFECTS: Generates the menu panel for buttons to be displayed
     private void generateMenu() {
         menuArea = new JPanel();
-        menuArea.setBounds(50, 430, 700, 200);
+        menuArea.setBounds(50, HEIGHT - 280, WIDTH - 100, HEIGHT - 500);
         menuArea.setLayout(new GridLayout(4, 2));
         fillMenu(menuArea);
         getContentPane().add(menuArea);
@@ -240,7 +342,7 @@ public class Game extends JFrame {
     // EFFECTS: produce the GUI interface for shopping
     private void shopMenu() {
         clear();
-        mainTextArea.append("Welcome to my store!\nAh now, let me see what we have today...\n");
+        mainTextArea.append("\"Welcome to my store!\"\n\"Ah now, let me see what we have today...\"\n");
         shop = generateShop();
         displayShop();
         fillShopMenuArea();
@@ -250,7 +352,7 @@ public class Game extends JFrame {
     // EFFECTS: display the shop in the GUI
     private void displayShop() {
         if (shop.getInventorySize() == 0) {
-            mainTextArea.append("Good luck in the arena!\n");
+            mainTextArea.append("\"Good luck in the arena!\"\n");
         } else {
             for (int i = 0; i < shop.getInventorySize(); i++) {  // Print out each Equipment in an Inventory
                 Equipment item = shop.getEquipment(i);
@@ -271,7 +373,7 @@ public class Game extends JFrame {
     // EFFECTS: Create a menu for shopping
     private void fillShopMenuArea() {
         if (stock == 0) { // Don't repopulate the menu if they are sold out
-            mainTextArea.append("Wow! I'm sold out! Thanks!\n");
+            mainTextArea.append("\"Wow! I'm sold out! Thanks!\"\n");
         } else {
             for (int i = 1; i <= stock; i++) {  // Add a new buy item button
                 menuArea.add(buyButton(i));
@@ -724,7 +826,7 @@ public class Game extends JFrame {
         } else {
             JOptionPane.showMessageDialog(this,
                     "Your character " + player.getName() + " was killed by " + enemy.getName() + ".\n Game over.");
-            setVisible(false); //you can't see me!
+            setVisible(false);
             dispose();
         }
     }
@@ -737,7 +839,7 @@ public class Game extends JFrame {
         if (player.getLevel() > NUMBER_OF_LEVELS) {
             JOptionPane.showMessageDialog(this,
                     "You've become the Champion of the Arena! You win!\nThanks for playing!");
-            setVisible(false); //you can't see me!
+            setVisible(false);
             dispose();
         }
         player.increaseStats(player.getClassName());
@@ -745,8 +847,6 @@ public class Game extends JFrame {
                 "You are now level %d.\nYour stats have increased, and you gained some gold for winning "
                 + "the fight.\n", player.getLevel()));
     }
-
-
 
     // EFFECTS: Generate GUI for viewing stats in the JTextArea
     private JButton statsButton() {
@@ -981,6 +1081,18 @@ public class Game extends JFrame {
         header.removeAll();
         fillHeader();
         refresh();
+    }
+
+    private Character getPlayer() {
+        return player;
+    }
+
+    private Character getEnemy() {
+        return enemy;
+    }
+
+    private Inventory getShop() {
+        return shop;
     }
 
     public static void main(String[] args) {

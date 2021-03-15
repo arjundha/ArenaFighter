@@ -1,103 +1,14 @@
 {
-    "dexterity": 13,
-    "gold": 9575,
-    "maxHP": 124,
-    "currentHP": 62,
-    "race": "dwarf",
-    "strength": 18,
-    "level": 5,
-    "name": "Arjun",
+    "dexterity": 14,
+    "gold": 100,
+    "maxHP": 8,
+    "currentHP": 8,
+    "race": "elf",
+    "strength": 8,
+    "level": 1,
+    "name": "jArjun",
     "className": "merchant",
-    "endurance": 18,
-    "inventory": [
-        {
-            "dexterity": 2,
-            "strength": 1,
-            "name": "swift bow",
-            "endurance": 0,
-            "speed": 2,
-            "worth": 50
-        },
-        {
-            "dexterity": 0,
-            "strength": 2,
-            "name": "iron sword",
-            "endurance": 0,
-            "speed": 0,
-            "worth": 25
-        },
-        {
-            "dexterity": 1,
-            "strength": 1,
-            "name": "iron dagger",
-            "endurance": 0,
-            "speed": 0,
-            "worth": 25
-        },
-        {
-            "dexterity": 6,
-            "strength": 4,
-            "name": "demonic dagger",
-            "endurance": 0,
-            "speed": 5,
-            "worth": 100
-        },
-        {
-            "dexterity": 1,
-            "strength": 2,
-            "name": "godly armour",
-            "endurance": 10,
-            "speed": 1,
-            "worth": 100
-        },
-        {
-            "dexterity": 10,
-            "strength": 10,
-            "name": "weapon of champions",
-            "endurance": 10,
-            "speed": 10,
-            "worth": 200
-        },
-        {
-            "dexterity": 1,
-            "strength": 1,
-            "name": "iron dagger",
-            "endurance": 0,
-            "speed": 0,
-            "worth": 25
-        },
-        {
-            "dexterity": 0,
-            "strength": 0,
-            "name": "wooden shield",
-            "endurance": 2,
-            "speed": 0,
-            "worth": 25
-        },
-        {
-            "dexterity": 2,
-            "strength": 3,
-            "name": "dark blade",
-            "endurance": 0,
-            "speed": 0,
-            "worth": 50
-        },
-        {
-            "dexterity": 1,
-            "strength": 0,
-            "name": "tunic of speed",
-            "endurance": 1,
-            "speed": 3,
-            "worth": 50
-        },
-        {
-            "dexterity": 0,
-            "strength": 2,
-            "name": "iron sword",
-            "endurance": 0,
-            "speed": 0,
-            "worth": 25
-        }
-    ],
-    "speed": 13
+    "endurance": 8,
+    "inventory": [],
+    "speed": 12
 }
