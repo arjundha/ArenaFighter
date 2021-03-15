@@ -13,7 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Scanner;
+import java.util.Random;
 
 /**
  * The Game class is the main handler of gameplay. It requires no parameters, and once a new Game is
@@ -51,6 +51,8 @@ public class Game extends JFrame {
     private static final int NUMBER_OF_EQUIPMENT_PAIRS_SOLD = 4;  // Number represents the number of weapons and armour
     // sold divided by two (it controls the while loop
     // in generateStore
+    private int stock;  // This number is the number of items in stock in the store right now.
+    private Inventory shop;
 
     // This number is used to determine the number that randomInteger is allowed to reach when generating equipment.
     // If more equipment is added to that function, this number needs to change.
@@ -86,21 +88,20 @@ public class Game extends JFrame {
     // EFFECTS: initiates the game for the user
     private void startScreen() {
         createTitle();
-//        generateStartMenu();
     }
 
     // MODIFIES: this
     // EFFECTS: creates the title screen of the game
     private void createTitle() {
         JPanel titlePanel = new JPanel();
-        titlePanel.setBounds(100, 100, 600, 100);
+        titlePanel.setBounds(100, 100, 600, 100);  // near the top middle of the screen
         titlePanel.setBackground(BACKGROUND);
 
-        JLabel titleLabel = new JLabel("Arena Fighter");
+        JLabel titleLabel = new JLabel("Arena Fighter");  // game title
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setFont(TITLE_FONT);
 
-        titlePanel.add(titleLabel);
+        titlePanel.add(titleLabel);  // add it all to the screen
         generateStartMenu();
         getContentPane().add(titlePanel);
     }
@@ -109,10 +110,10 @@ public class Game extends JFrame {
     // EFFECTS: creates the main menu for the game
     private void generateStartMenu() {
         JPanel newGame = new JPanel();
-        newGame.setBounds(100, 500, 600, 80);
+        newGame.setBounds(100, 500, 600, 80);  // this is the lower portion of the title screen
         newGame.setBackground(BACKGROUND);
 
-        JButton newGameButton = createMenuButton();
+        JButton newGameButton = createMenuButton();  // add two different buttons to the screen
         newGameButton.setText("NEW GAME");
         newGameButton.addActionListener(new StartNewGameHandler());
         JButton loadGameButton = createMenuButton();
@@ -120,7 +121,7 @@ public class Game extends JFrame {
         loadGameButton.addActionListener(new LoadGameHandler());
 
         newGame.add(newGameButton);
-        newGame.add(Box.createHorizontalStrut(100));
+        newGame.add(Box.createHorizontalStrut(100));  // space the buttons apart from each other
         newGame.add(loadGameButton);
         getContentPane().add(newGame);
     }
@@ -176,7 +177,6 @@ public class Game extends JFrame {
         mainArea.setBounds(50, 50, 700, 370);
         mainArea.setBackground(Color.blue);
         generateTextArea();
-//        getContentPane().add(mainArea);
         generateMenu();
 
     }
@@ -195,7 +195,7 @@ public class Game extends JFrame {
     // MODIFIES: this
     // EFFECTS: fills the menuArea with buttons needed for the game
     private void fillMenu(JPanel menuArea) {
-        for (int i = 1; i <= 8; i++) {
+        for (int i = 1; i <= 8; i++) {  // Add all 8 buttons
             if (i == 1) {
                 menuArea.add(shopButton());
             } else if (i == 2) {
@@ -216,6 +216,7 @@ public class Game extends JFrame {
         }
     }
 
+    // EFFECTS: creates a button that will take user to shop menu
     private JButton shopButton() {
         JButton button = createMenuButton();
         button.setText("1) Shop");
@@ -223,11 +224,198 @@ public class Game extends JFrame {
         return button;
     }
 
+    // EFFECTS: handles the button on click to take user to shop menu
     private class ShopHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
+            stock = 8;
+            shopMenu();
 
         }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: produce the GUI interface for shopping
+    private void shopMenu() {
+        clear();
+        mainTextArea.append("Welcome to my store!\nAh now, let me see what we have today...\n");
+        shop = generateShop();
+        displayShop();
+        fillShopMenuArea();
+    }
+
+    // MODIFIES: this
+    // EFFECTS: display the shop in the GUI
+    private void displayShop() {
+        if (shop.getInventorySize() == 0) {
+            mainTextArea.append("Good luck in the arena!\n");
+        } else {
+            for (int i = 0; i < shop.getInventorySize(); i++) {  // Print out each Equipment in an Inventory
+                Equipment item = shop.getEquipment(i);
+                mainTextArea.append(String.format("\n%d. %s: "
+                                + "\nStrength - %d   Endurance - %d   Dexterity - %d   Speed - %d   VALUE: %d\n",
+                        i + 1,
+                        item.getName().substring(0, 1).toUpperCase() + item.getName().substring(1),  // Capitalize name
+                        item.getStrength(),
+                        item.getEndurance(),
+                        item.getDexterity(),
+                        item.getSpeed(),
+                        item.getWorth()));
+            }
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Create a menu for shopping
+    private void fillShopMenuArea() {
+        if (stock == 0) { // Don't repopulate the menu if they are sold out
+            mainTextArea.append("Wow! I'm sold out! Thanks!\n");
+        } else {
+            for (int i = 1; i <= stock; i++) {  // Add a new buy item button
+                menuArea.add(buyButton(i));
+            }
+        }
+        JButton stats = statsButton();
+        stats.setText(String.format("%d) View Stats", stock + 1));  // We want these numbers to be accurate
+        menuArea.add(stats);
+        JButton inv = inventoryButton();
+        inv.setText(String.format("%d) View Inventory", stock + 2));
+        menuArea.add(inv);
+        JButton back = backButton();
+        back.setText(String.format("%d) Back", stock + 3));
+        menuArea.add(back);
+
+        refresh();
+    }
+
+    // EFFECTS: Creates a button that when clicked will allow players to train their character
+    private JButton buyButton(int index) {
+        JButton button = createMenuButton();
+        button.setText(String.format("%d) Buy item %d", index, index));
+        button.addActionListener(new BuyHandler(index));
+        return button;
+    }
+
+    // MODIFIES: Character (May increase the stats of a character and reduces their gold)
+    // EFFECTS: Spend gold to increase the stats of a player character
+    private class BuyHandler implements ActionListener {
+        private int item;
+
+        // EFFECTS: Construct a buy handler with a specific item in mind
+        public BuyHandler(int item) {
+            this.item = item;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            buyItem(item);
+        }
+    }
+
+    // MODIFIES: Inventory and Character
+    // EFFECTS: Remove an item from a shop inventory and place it in a Character inventory after spending gold
+    private void buyItem(int item) {
+        if (shop.getInventorySize() == 0) {  // Check if the inventory is empty
+            mainTextArea.append("Sorry, I am sold out!\n");
+
+        } else if (0 < item && item <= shop.getInventorySize()) {  // Check if the user input is within the options
+            int index = item - 1;  // get the index of the element we want
+            Equipment equipment = shop.getEquipment(index);
+            int cost = equipment.getWorth();  // How much does it cost?
+
+            if (player.getGold() >= cost) {  // Can afford it
+                player.equipItem(equipment);  // Add the equipment to your inventory
+                player.spendGold(cost);  // Spend the gold needed to buy the item
+                shop.removeEquipment(index);  // Remove the equipment from the store
+                stock--;  // reduce shop stock by 1
+                menuArea.removeAll(); // reset the menu so you cant buy an item thats gone
+                mainTextArea.setText(null); // reset the text area so its not messy
+                fillShopMenuArea();
+                displayShop();
+                updateHeader();
+                mainTextArea.append(String.format("\nYou buy the %s.\n", equipment.getName()));  // Informative message
+
+            } else {  // Cant afford it
+                mainTextArea.append("Ah, it appears as if you do not have enough gold for that, sorry.\n");
+            }
+
+        } else {
+            mainTextArea.append("I don't think I have that in stock...\n");
+        }
+    }
+
+    // EFFECTS: Produce a randomized inventory to be sold in a shop
+    private Inventory generateShop() {
+        int count = 0;
+        Inventory shopInventory = new Inventory();
+
+        while (count < NUMBER_OF_EQUIPMENT_PAIRS_SOLD) {  // We want the shop to only contain a certain number of items
+            shopInventory.addEquipment(generateWeapon(generateRandomInteger(RANDOM_ITEM_SELECTOR)));
+            shopInventory.addEquipment(generateArmour(generateRandomInteger(RANDOM_ITEM_SELECTOR)));
+            count += 1;
+        }
+        return shopInventory;
+    }
+
+    // REQUIRES: itemNumber must be within [0, RANDOM_ITEM_SELECTOR]
+    // EFFECTS: produce an equipment (stylized as a weapon) based on the number received
+    private Equipment generateWeapon(int itemNumber) {
+        if (itemNumber == 0 || itemNumber == 1 || itemNumber == 2) {
+            return new Equipment("iron dagger", 1, 0, 1, 0, 25);
+
+        } else if (itemNumber == 3 || itemNumber == 4 || itemNumber == 5) {
+            return new Equipment("iron sword", 2, 0, 0, 0, 25);
+
+        } else if (itemNumber == 6 || itemNumber == 7) {
+            return new Equipment("swift bow", 1, 0, 2, 2, 50);
+
+        } else if (itemNumber == 8 || itemNumber == 9) {
+            return new Equipment("dark blade", 3, 0, 2, 0, 50);
+
+        } else if (itemNumber == 10) {
+            return new Equipment("demonic dagger", 4, 0, 6, 5, 100);
+
+        } else if (itemNumber == 11) {
+            return new Equipment("holy longsword", 11, 0, 4, 0, 100);
+
+        } else {
+            return new Equipment("weapon of champions", 10, 10, 10, 10, 200);
+
+        }
+    }
+
+    // REQUIRES: itemNumber must be within [0, RANDOM_ITEM_SELECTOR]
+    // EFFECTS: produce an equipment (stylized as armour) based on the number received
+    private Equipment generateArmour(int itemNumber) {
+        if (itemNumber == 0 || itemNumber == 1 || itemNumber == 2) {
+            return new Equipment("wooden shield", 0, 2, 0, 0, 25);
+
+        } else if (itemNumber == 3 || itemNumber == 4 || itemNumber == 5) {
+            return new Equipment("leather boots", 0, 0, 0, 2, 25);
+
+        } else if (itemNumber == 6 || itemNumber == 7) {
+            return new Equipment("armour of strength", 2, 3, 0, 0, 50);
+
+        } else if (itemNumber == 8 || itemNumber == 9) {
+            return new Equipment("tunic of speed", 0, 1, 1, 3, 50);
+
+        } else if (itemNumber == 10) {
+            return new Equipment("godly armour", 2, 10, 1, 1, 100);
+
+        } else if (itemNumber == 11) {
+            return new Equipment("token of true sight", 1, 1, 12, 1, 100);
+
+        } else {
+            return new Equipment("amulet of champions", 10, 10, 10, 10, 200);
+
+        }
+    }
+
+    // REQUIRES: upperbound must be a positive integer represent the highest integer you want to possibly get
+    // EFFECTS: Generates a random integer from [0, upperbound] inclusive
+    private int generateRandomInteger(int upperbound) {
+        Random random = new Random();  // Start a random class object
+        return random.nextInt(upperbound + 1);  // Return a random int (the + 1 is needed to include upperbound)
     }
 
     // EFFECTS: Generates the menu for training a character
