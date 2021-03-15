@@ -299,7 +299,7 @@ public class Game extends JFrame {
     // MODIFIES: Character (May increase the stats of a character and reduces their gold)
     // EFFECTS: Spend gold to increase the stats of a player character
     private class BuyHandler implements ActionListener {
-        private int item;
+        private final int item;
 
         // EFFECTS: Construct a buy handler with a specific item in mind
         public BuyHandler(int item) {
@@ -350,8 +350,8 @@ public class Game extends JFrame {
         Inventory shopInventory = new Inventory();
 
         while (count < NUMBER_OF_EQUIPMENT_PAIRS_SOLD) {  // We want the shop to only contain a certain number of items
-            shopInventory.addEquipment(generateWeapon(generateRandomInteger(RANDOM_ITEM_SELECTOR)));
-            shopInventory.addEquipment(generateArmour(generateRandomInteger(RANDOM_ITEM_SELECTOR)));
+            shopInventory.addEquipment(generateWeapon(generateRandomInteger()));
+            shopInventory.addEquipment(generateArmour(generateRandomInteger()));
             count += 1;
         }
         return shopInventory;
@@ -413,9 +413,9 @@ public class Game extends JFrame {
 
     // REQUIRES: upperbound must be a positive integer represent the highest integer you want to possibly get
     // EFFECTS: Generates a random integer from [0, upperbound] inclusive
-    private int generateRandomInteger(int upperbound) {
+    private int generateRandomInteger() {
         Random random = new Random();  // Start a random class object
-        return random.nextInt(upperbound + 1);  // Return a random int (the + 1 is needed to include upperbound)
+        return random.nextInt(Game.RANDOM_ITEM_SELECTOR + 1);  // Return a random int + 1 to include upperbound
     }
 
     // EFFECTS: Generates the menu for training a character
@@ -440,7 +440,7 @@ public class Game extends JFrame {
     private void trainMenu() {
         clear();
         mainTextArea.append("It looks like I can spend some gold to train my stats!\nWhat should I do...?\n");
-        menuArea.add(smallTrainingButton());
+        menuArea.add(smallTrainingButton());  // add the two different training buttons
         menuArea.add(largeTrainingButton());
         JButton stats = statsButton();
         stats.setText("3) View Stats");
@@ -598,6 +598,7 @@ public class Game extends JFrame {
         }
     }
 
+    // EFFECTS: Generate GUI for fighting
     private JButton fightButton() {
         JButton button = createMenuButton();
         button.setText("4) Fight");
@@ -605,6 +606,7 @@ public class Game extends JFrame {
         return button;
     }
 
+    // EFFECTS: Generate GUI for viewing stats in the JTextArea
     private JButton statsButton() {
         JButton button = createMenuButton();
         button.setText("5) View stats");
@@ -612,6 +614,7 @@ public class Game extends JFrame {
         return button;
     }
 
+    // EFFECTS: Allows player stats information to be displayed when button is pressed
     private class StatsHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -619,6 +622,7 @@ public class Game extends JFrame {
         }
     }
 
+    // MODIFIES: this
     // EFFECTS: Print out all the stats of a character except for inventory
     private void printCharacter(Character player) {
         mainTextArea.append(String.format("\nName: %s\nRace: %s\nClass: %s\n\nLEVEL: %s"
@@ -637,6 +641,7 @@ public class Game extends JFrame {
         scrollDown();
     }
 
+    // EFFECTS: Generate GUI for viewing inventory in the JTextArea
     private JButton inventoryButton() {
         JButton button = createMenuButton();
         button.setText("6) View inventory");
@@ -644,6 +649,7 @@ public class Game extends JFrame {
         return button;
     }
 
+    // EFFECTS: adds functionality to button so when it is clicked, players view their inventory
     private class InventoryHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -651,11 +657,11 @@ public class Game extends JFrame {
         }
     }
 
+    // MODIFIES: this
     // EFFECTS: Print out detailed information for each equipment in an inventory
     private void printInventory(Inventory inventory) {
         if (inventory.getInventorySize() == 0) {
             mainTextArea.append("My inventory is empty.\n");
-//            scrollBar.setValue(scrollBar.getMaximum());
             scrollDown();
 
 
@@ -678,6 +684,7 @@ public class Game extends JFrame {
 
     }
 
+    // EFFECTS: on press, the player is saved in the JSON
     private JButton saveButton() {
         JButton button = createMenuButton();
         button.setText("7) Save");
@@ -685,6 +692,7 @@ public class Game extends JFrame {
         return button;
     }
 
+    // EFFECTS: adds functionality to the save button
     private class SaveHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -692,6 +700,7 @@ public class Game extends JFrame {
         }
     }
 
+    // EFFECTS: when pressed, the player will quit the game
     private JButton quitButton() {
         JButton button = createMenuButton();
         button.setText("8) Quit");
@@ -699,6 +708,8 @@ public class Game extends JFrame {
         return button;
     }
 
+    // MODIFIES: this
+    // EFFECTS: player will be prompted to save the game before quitting, then quit
     private class QuitHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -715,36 +726,40 @@ public class Game extends JFrame {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: generates the main JTextArea for game information to be displayed
     private void generateTextArea() {
-        mainTextArea = new JTextArea("What would you like to do?\n");
+        mainTextArea = new JTextArea("What would you like to do?\n");  // initial text
 //        mainTextArea.setBounds(0, 0, 700, 370);
         mainTextArea.setBounds(50, 50, 700, 370);
 
         mainTextArea.setBackground(Color.BLACK);
         mainTextArea.setForeground(Color.WHITE);
         mainTextArea.setFont(NORMAL_FONT);
-        mainTextArea.setLineWrap(true);
-        mainTextArea.setEditable(false);
-        scrollPane = new JScrollPane(mainTextArea);
+        mainTextArea.setLineWrap(true);  // handle horizontal overflow automatically
+        mainTextArea.setEditable(false);  // we dont want editing
+        scrollPane = new JScrollPane(mainTextArea);  // make it so it can scroll and handle overflow
         scrollPane.setBounds(50,50,700,370);
 //        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 //        mainArea.add(mainTextArea);
         scrollBar = scrollPane.getVerticalScrollBar();
         getContentPane().add(scrollPane);
-        revalidate();
-        repaint();
-
+        refresh();
     }
 
+    // MODIFIES: this
+    // EFFECTS: generates the main JTextArea for game information to be displayed
     private void generateHeader() {
         header = new JPanel();
         header.setBounds(0,0, WIDTH - 10, 50);
         header.setLayout(new BoxLayout(header, BoxLayout.X_AXIS));
         header.setBackground(Color.GRAY);
-        fillHeader();
+        fillHeader();  // we need to fill the header with info!
         getContentPane().add(header);
     }
 
+    // MODIFIES: this
+    // EFFECTS: display player info in the header JPanel
     private void fillHeader() {
         header.add(createHeaderLabel(String.format("  %s", player.getName())));
         header.add(Box.createGlue());
@@ -755,6 +770,7 @@ public class Game extends JFrame {
         header.add(createHeaderLabel(String.format("Gold: %d   ", player.getGold())));
     }
 
+    // EFFECTS: Produce a JLabel with certain text displayed
     private JLabel createHeaderLabel(String text) {
         JLabel label = new JLabel(text);
         label.setForeground(Color.BLACK);
@@ -796,24 +812,32 @@ public class Game extends JFrame {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: Scroll the JTextArea down to the bottom
     private void scrollDown() {
         int x;
         mainTextArea.selectAll();
-        x = mainTextArea.getSelectionEnd();
+        x = mainTextArea.getSelectionEnd(); // get the end of the JTextArea
         mainTextArea.select(x,x);
     }
 
+    // MODIFIES: this
+    // EFFECTS: removes all text in the JTextArea mainTextArea and all buttons in the JPanel menuArea
     private void clear() {
-        mainTextArea.setText("");
-        menuArea.removeAll();
-        refresh();
+        mainTextArea.setText("");  // this can be changed to null or "" and do the same thing (removes text)
+        menuArea.removeAll();  // get rid of those buttons!
+        refresh();  // repaint and refresh
     }
 
+    // MODIFIES: this
+    // EFFECTS: updates the displayed GUI
     private void refresh() {
         revalidate();
         repaint();
     }
 
+    // MODIFIES: this
+    // EFFECTS: update the header JPanel with new player information
     private void updateHeader() {
         header.removeAll();
         fillHeader();
