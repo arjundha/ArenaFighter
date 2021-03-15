@@ -1,5 +1,7 @@
 package ui;
 
+import model.Equipment;
+import model.Inventory;
 import org.json.JSONException;
 import persistence.JsonReader;
 import persistence.JsonWriter;
@@ -11,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
  * The Game class is the main handler of gameplay. It requires no parameters, and once a new Game is
@@ -30,13 +33,35 @@ public class Game extends JFrame {
     private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 50);
     private static final Font NORMAL_FONT = new Font("Arial", Font.PLAIN, 21);
 
+    private JPanel header;
     private JPanel mainArea;
+    private JPanel menuArea;
     private JTextArea mainTextArea;
+    private JScrollPane scrollPane;
+    private JScrollBar scrollBar;
 
     private static final String JSON_SAVE = "./data/save.json";
     private final JsonWriter jsonWriter;
     private final JsonReader jsonReader;
     private Character player;
+
+    private static final int NUMBER_OF_LEVELS = 5; // This represents the number of levels in the game, it ends when the
+    // player level exceeds this number.
+
+    private static final int NUMBER_OF_EQUIPMENT_PAIRS_SOLD = 4;  // Number represents the number of weapons and armour
+    // sold divided by two (it controls the while loop
+    // in generateStore
+
+    // This number is used to determine the number that randomInteger is allowed to reach when generating equipment.
+    // If more equipment is added to that function, this number needs to change.
+    private static final int RANDOM_ITEM_SELECTOR = 12;
+    private static final int PRICE_OF_SMALL_TRAINING = 30;  // Price of a small training room in gold
+    private static final int PRICE_OF_LARGE_TRAINING = 50;  // Price of a large training room in gold
+    private static final int PRICE_OF_SMALL_POTION = 10;  // Price of a small potion
+    private static final int PRICE_OF_LARGE_POTION = 20;  // Price of a large potion
+    private static final int HEALTH_FROM_SMALL_POTION = 10;  // Amount of health healed from a small potion
+    private static final int HEALTH_FROM_LARGE_POTION = 25;  // Amount of health healed from a large potion
+    private static final int DEXTERITY_ROLL = 60; // Used for determining if an attack will miss (DEX > RANDOM_INT)
 
     public Game() throws FileNotFoundException {
         super("Arena Fighter");
@@ -57,11 +82,15 @@ public class Game extends JFrame {
         setVisible(true);
     }
 
+    // MODIFIES: this
+    // EFFECTS: initiates the game for the user
     private void startScreen() {
         createTitle();
 //        generateStartMenu();
     }
 
+    // MODIFIES: this
+    // EFFECTS: creates the title screen of the game
     private void createTitle() {
         JPanel titlePanel = new JPanel();
         titlePanel.setBounds(100, 100, 600, 100);
@@ -76,6 +105,8 @@ public class Game extends JFrame {
         getContentPane().add(titlePanel);
     }
 
+    // MODIFIES: this
+    // EFFECTS: creates the main menu for the game
     private void generateStartMenu() {
         JPanel newGame = new JPanel();
         newGame.setBounds(100, 500, 600, 80);
@@ -94,6 +125,7 @@ public class Game extends JFrame {
         getContentPane().add(newGame);
     }
 
+    // EFFECTS: creates a button to be used in menues
     private JButton createMenuButton() {
         JButton button = new JButton();
         button.setBackground(Color.white);
@@ -104,6 +136,7 @@ public class Game extends JFrame {
         return button;
     }
 
+    // EFFECTS: adds functionality to the New Game button
     private class StartNewGameHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -112,10 +145,13 @@ public class Game extends JFrame {
         }
     }
 
+    // MODIFIES: player
+    // EFFECTS: generates a new player character for the user to use in the game
     private Character createCharacter() {
         return new Character("Arjun", "human", "merchant", 10, 10, 10,10, 10);
     }
 
+    // EFFECTS: adds functionality to the load game button
     private class LoadGameHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -124,6 +160,8 @@ public class Game extends JFrame {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: generates the game screen after removing the main menu screen
     private void runGame() {
         getContentPane().removeAll();
         getContentPane().repaint();
@@ -131,24 +169,31 @@ public class Game extends JFrame {
         generateGameScreen();
     }
 
+    // MODIFIES: this
+    // EFFECTS: generates the panel for game dialog to be displayed
     private void generateGameScreen() {
         mainArea = new JPanel();
-        mainArea.setBounds(50, 50, 700, 300);
+        mainArea.setBounds(50, 50, 700, 370);
         mainArea.setBackground(Color.blue);
         generateTextArea();
-        getContentPane().add(mainArea);
+//        getContentPane().add(mainArea);
         generateMenu();
 
     }
 
+    // MODIFIES: this
+    // EFFECTS: Generates the menu panel for buttons to be displayed
     private void generateMenu() {
-        JPanel menuArea = new JPanel();
-        menuArea.setBounds(50, 360, 700, 290);
+        menuArea = new JPanel();
+        menuArea.setBounds(50, 430, 700, 200);
         menuArea.setLayout(new GridLayout(4, 2));
         fillMenu(menuArea);
         getContentPane().add(menuArea);
+        refresh();
     }
 
+    // MODIFIES: this
+    // EFFECTS: fills the menuArea with buttons needed for the game
     private void fillMenu(JPanel menuArea) {
         for (int i = 1; i <= 8; i++) {
             if (i == 1) {
@@ -185,18 +230,184 @@ public class Game extends JFrame {
         }
     }
 
+    // EFFECTS: Generates the menu for training a character
     private JButton trainButton() {
         JButton button = createMenuButton();
         button.setText("2) Train");
-        button.addActionListener(new ShopHandler());
+        button.addActionListener(new TrainHandler());
         return button;
     }
 
+    // MODIFIES: this
+    // EFFECTS: Adds functionality to the trainButton
+    private class TrainHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            trainMenu();
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Generates the menu for training a character
+    private void trainMenu() {
+        clear();
+        mainTextArea.append("It looks like I can spend some gold to train my stats!\nWhat should I do...?\n");
+        menuArea.add(smallTrainingButton());
+        menuArea.add(largeTrainingButton());
+        JButton stats = statsButton();
+        stats.setText("3) View Stats");
+        menuArea.add(stats);
+        menuArea.add(backButton());
+        refresh();
+    }
+
+    // EFFECTS: Creates a button that when clicked will allow players to train their character
+    private JButton smallTrainingButton() {
+        JButton button = createMenuButton();
+        button.setText(String.format("1) Rent a small training room (%dg)", PRICE_OF_SMALL_TRAINING));
+        button.addActionListener(new SmallTrainHandler());
+        return button;
+    }
+
+    // MODIFIES: Character (May increase the stats of a character and reduces their gold)
+    // EFFECTS: Spend gold to increase the stats of a player character
+    private class SmallTrainHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (player.getGold() >= PRICE_OF_SMALL_TRAINING) {
+                player.spendGold(PRICE_OF_SMALL_TRAINING);
+                player.increaseStats(player.getClassName());  // Small training (ONLY TRAINS ONCE)
+                updateHeader();
+                mainTextArea.append("Great! I feel a bit stronger!\n");
+
+            } else {
+                mainTextArea.append("I don't have enough gold for a small training room.\n");
+            }
+        }
+    }
+
+    // EFFECTS: Creates a button that allows players to do a large training when clicked
+    private JButton largeTrainingButton() {
+        JButton button = createMenuButton();
+        button.setText(String.format("2) Rent a large training room (%dg)", PRICE_OF_LARGE_TRAINING));
+        button.addActionListener(new LargeTrainHandler());
+        return button;
+    }
+
+    // MODIFIES: Character (May increase the stats of a character and reduces their gold)
+    // EFFECTS: Spend gold to increase the stats of a player character
+    private class LargeTrainHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (player.getGold() >= PRICE_OF_LARGE_TRAINING) {
+                player.spendGold(PRICE_OF_LARGE_TRAINING);
+                player.increaseStats(player.getClassName()); // Large training (TRAINS TWICE)
+                player.increaseStats(player.getClassName());
+                updateHeader();
+                mainTextArea.append("Amazing! I feel a lot stronger!\n");
+
+            } else {
+                mainTextArea.append("Hmm I don't think I can afford a large training room right now.\n");
+            }
+        }
+    }
+
+    private JButton backButton() {
+        JButton button = createMenuButton();
+        button.setText("4) Back");
+        button.addActionListener(new BackHandler());
+        return button;
+    }
+
+    private class BackHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            clear();
+            mainTextArea.setText("Maybe I'll come back later.\n\nWhat should I do next?\n");
+            fillMenu(menuArea);
+            refresh();
+        }
+    }
+
+    // EFFECTS: Generate GUI to guide players through selecting potions to buy
     private JButton healButton() {
         JButton button = createMenuButton();
         button.setText("3) Heal");
-        button.addActionListener(new ShopHandler());
+        button.addActionListener(new HealHandler());
         return button;
+    }
+
+    // EFFECTS: Generate GUI to guide players through selecting potions to buy
+    private class HealHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            healMenu();
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Generate GUI to guide players through selecting potions to buy
+    private void healMenu() {
+        clear();
+        mainTextArea.append("It might be a good idea to drink a potion and heal before my fight."
+                + "\nThere seems to be a variety of potions, which should I buy?\n");
+        menuArea.add(smallHealButton());
+        menuArea.add(largeHealButton());
+        JButton stats = statsButton();
+        stats.setText("3) View Stats");
+        menuArea.add(stats);
+        menuArea.add(backButton());
+        refresh();
+    }
+
+    // EFFECTS: Creates a button that when clicked will allow players to buy a small potion to heal
+    private JButton smallHealButton() {
+        JButton button = createMenuButton();
+        button.setText(String.format("1) Drink a small potion (%dg)", PRICE_OF_SMALL_POTION));
+        button.addActionListener(new SmallHealHandler());
+        return button;
+    }
+
+    // MODIFIES: Character (May increase the current health of a character and reduces their gold)
+    // EFFECTS: Spend gold to increase the current health of a player character
+    private class SmallHealHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (player.getGold() >= PRICE_OF_SMALL_POTION) {
+                player.spendGold(PRICE_OF_SMALL_POTION);
+                player.healCharacter(HEALTH_FROM_SMALL_POTION);
+                updateHeader();
+                mainTextArea.append("Great! I feel way better!\n");
+
+            } else {
+                mainTextArea.append("Doesn't seem like I can afford a small potion right now.\n");
+            }
+        }
+    }
+
+    // EFFECTS: Creates a button that allows players to buy a large potion
+    private JButton largeHealButton() {
+        JButton button = createMenuButton();
+        button.setText(String.format("2) Drink a large potion (%dg)", PRICE_OF_LARGE_POTION));
+        button.addActionListener(new LargeHealHandler());
+        return button;
+    }
+
+    // MODIFIES: Character (May increase the current health of a character and reduces their gold)
+    // EFFECTS: Spend gold to increase the current health of a player character
+    private class LargeHealHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (player.getGold() >= PRICE_OF_LARGE_POTION) {  // Can you afford the potion?
+                player.spendGold(PRICE_OF_LARGE_POTION);
+                player.healCharacter(HEALTH_FROM_LARGE_POTION);  // Heal a large amount of HP
+                updateHeader();  // Update the info in the header
+                mainTextArea.append("Amazing! I feel a lot healthier!\n");
+
+            } else {
+                mainTextArea.append("Looks like I don't have enough gold for these large potions right now.\n");
+            }
+        }
     }
 
     private JButton fightButton() {
@@ -209,15 +420,74 @@ public class Game extends JFrame {
     private JButton statsButton() {
         JButton button = createMenuButton();
         button.setText("5) View stats");
-        button.addActionListener(new ShopHandler());
+        button.addActionListener(new StatsHandler());
         return button;
+    }
+
+    private class StatsHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            printCharacter(player);
+        }
+    }
+
+    // EFFECTS: Print out all the stats of a character except for inventory
+    private void printCharacter(Character player) {
+        mainTextArea.append(String.format("\nName: %s\nRace: %s\nClass: %s\n\nLEVEL: %s"
+                        + "\nHP: %d/%d\nSTR: %d\nEND: %d\nDEX: %d\nSPD: %d\n\nGOLD: %d\n",
+                player.getName(),
+                player.getRace().substring(0, 1).toUpperCase() + player.getRace().substring(1), // Capitalize
+                player.getClassName().substring(0, 1).toUpperCase() + player.getClassName().substring(1), // Capitalize
+                player.getLevel(),
+                player.getCurrentHealth(),
+                player.getMaxHealth(),
+                player.getStrength(),
+                player.getEndurance(),
+                player.getDexterity(),
+                player.getSpeed(),
+                player.getGold()));
+        scrollDown();
     }
 
     private JButton inventoryButton() {
         JButton button = createMenuButton();
         button.setText("6) View inventory");
-        button.addActionListener(new ShopHandler());
+        button.addActionListener(new InventoryHandler());
         return button;
+    }
+
+    private class InventoryHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            printInventory(player.getInventory());
+        }
+    }
+
+    // EFFECTS: Print out detailed information for each equipment in an inventory
+    private void printInventory(Inventory inventory) {
+        if (inventory.getInventorySize() == 0) {
+            mainTextArea.append("My inventory is empty.\n");
+//            scrollBar.setValue(scrollBar.getMaximum());
+            scrollDown();
+
+
+        } else {
+            mainTextArea.append("\nINVENTORY:");
+            for (int i = 0; i < inventory.getInventorySize(); i++) {  // Print out each Equipment in an Inventory
+                Equipment item = inventory.getEquipment(i);
+                mainTextArea.append(String.format("\n%d. %s: "
+                                + "\nStrength - %d   Endurance - %d   Dexterity - %d   Speed - %d   VALUE: %d\n",
+                        i + 1,
+                        item.getName().substring(0, 1).toUpperCase() + item.getName().substring(1),  // Capitalize name
+                        item.getStrength(),
+                        item.getEndurance(),
+                        item.getDexterity(),
+                        item.getSpeed(),
+                        item.getWorth()));
+                scrollDown();
+            }
+        }
+
     }
 
     private JButton saveButton() {
@@ -258,29 +528,36 @@ public class Game extends JFrame {
     }
 
     private void generateTextArea() {
-        mainTextArea = new JTextArea("What would you like to do?");
-        mainTextArea.setBounds(0, 0, 700, 300);
+        mainTextArea = new JTextArea("What would you like to do?\n");
+//        mainTextArea.setBounds(0, 0, 700, 370);
+        mainTextArea.setBounds(50, 50, 700, 370);
+
         mainTextArea.setBackground(Color.BLACK);
         mainTextArea.setForeground(Color.WHITE);
         mainTextArea.setFont(NORMAL_FONT);
         mainTextArea.setLineWrap(true);
         mainTextArea.setEditable(false);
-//        JScrollPane scroll = new JScrollPane(mainTextArea);
-//        scroll.setBounds(10,60,780,500);
-        mainArea.add(mainTextArea);
+        scrollPane = new JScrollPane(mainTextArea);
+        scrollPane.setBounds(50,50,700,370);
+//        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+//        mainArea.add(mainTextArea);
+        scrollBar = scrollPane.getVerticalScrollBar();
+        getContentPane().add(scrollPane);
+        revalidate();
+        repaint();
 
     }
 
     private void generateHeader() {
-        JPanel header = new JPanel();
+        header = new JPanel();
         header.setBounds(0,0, WIDTH - 10, 50);
         header.setLayout(new BoxLayout(header, BoxLayout.X_AXIS));
         header.setBackground(Color.GRAY);
-        fillHeader(header);
+        fillHeader();
         getContentPane().add(header);
     }
 
-    private void fillHeader(JPanel header) {
+    private void fillHeader() {
         header.add(createHeaderLabel(String.format("  %s", player.getName())));
         header.add(Box.createGlue());
         header.add(createHeaderLabel(String.format("Level: %d", player.getLevel())));
@@ -329,6 +606,30 @@ public class Game extends JFrame {
         } catch (JSONException e) {
             System.out.println("Unable to read from file: " + JSON_SAVE + ". The data may be corrupted.");
         }
+    }
+
+    private void scrollDown() {
+        int x;
+        mainTextArea.selectAll();
+        x = mainTextArea.getSelectionEnd();
+        mainTextArea.select(x,x);
+    }
+
+    private void clear() {
+        mainTextArea.setText("");
+        menuArea.removeAll();
+        refresh();
+    }
+
+    private void refresh() {
+        revalidate();
+        repaint();
+    }
+
+    private void updateHeader() {
+        header.removeAll();
+        fillHeader();
+        refresh();
     }
 
     public static void main(String[] args) {
