@@ -1,14 +1,47 @@
 {
-    "dexterity": 10,
-    "gold": 50,
-    "maxHP": 10,
-    "currentHP": 10,
-    "race": "human",
-    "strength": 10,
-    "level": 1,
-    "name": "Benny",
-    "className": "warrior",
-    "endurance": 10,
-    "inventory": [],
-    "speed": 10
+  "dexterity": 9,
+  "gold": 100,
+  "maxHP": 120,
+  "currentHP": 6,
+  "race": "dwarf",
+  "strength": 14,
+  "level": 3,
+  "name": "Arjun",
+  "className": "merchant",
+  "endurance": 14,
+  "inventory": [
+    {
+      "dexterity": 2,
+      "strength": 1,
+      "name": "swift bow",
+      "endurance": 0,
+      "speed": 2,
+      "worth": 50
+    },
+    {
+      "dexterity": 0,
+      "strength": 2,
+      "name": "iron sword",
+      "endurance": 0,
+      "speed": 0,
+      "worth": 25
+    },
+    {
+      "dexterity": 1,
+      "strength": 1,
+      "name": "iron dagger",
+      "endurance": 0,
+      "speed": 0,
+      "worth": 25
+    },
+    {
+      "dexterity": 6,
+      "strength": 4,
+      "name": "demonic dagger",
+      "endurance": 0,
+      "speed": 5,
+      "worth": 100
+    }
+  ],
+  "speed": 9
 }
