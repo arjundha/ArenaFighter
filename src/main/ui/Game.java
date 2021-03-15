@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Random;
+import java.util.Scanner;
 
 /**
  * The Game class is the main handler of gameplay. It requires no parameters, and once a new Game is
@@ -44,6 +45,7 @@ public class Game extends JFrame {
     private final JsonWriter jsonWriter;
     private final JsonReader jsonReader;
     private Character player;
+    private Character enemy;
 
     private static final int NUMBER_OF_LEVELS = 5; // This represents the number of levels in the game, it ends when the
     // player level exceeds this number.
@@ -350,8 +352,8 @@ public class Game extends JFrame {
         Inventory shopInventory = new Inventory();
 
         while (count < NUMBER_OF_EQUIPMENT_PAIRS_SOLD) {  // We want the shop to only contain a certain number of items
-            shopInventory.addEquipment(generateWeapon(generateRandomInteger()));
-            shopInventory.addEquipment(generateArmour(generateRandomInteger()));
+            shopInventory.addEquipment(generateWeapon(generateRandomInteger(RANDOM_ITEM_SELECTOR)));
+            shopInventory.addEquipment(generateArmour(generateRandomInteger(RANDOM_ITEM_SELECTOR)));
             count += 1;
         }
         return shopInventory;
@@ -413,9 +415,9 @@ public class Game extends JFrame {
 
     // REQUIRES: upperbound must be a positive integer represent the highest integer you want to possibly get
     // EFFECTS: Generates a random integer from [0, upperbound] inclusive
-    private int generateRandomInteger() {
+    private int generateRandomInteger(int upperbound) {
         Random random = new Random();  // Start a random class object
-        return random.nextInt(Game.RANDOM_ITEM_SELECTOR + 1);  // Return a random int + 1 to include upperbound
+        return random.nextInt(upperbound + 1);  // Return a random int + 1 to include upperbound
     }
 
     // EFFECTS: Generates the menu for training a character
@@ -602,9 +604,149 @@ public class Game extends JFrame {
     private JButton fightButton() {
         JButton button = createMenuButton();
         button.setText("4) Fight");
-        button.addActionListener(new ShopHandler());
+        button.addActionListener(new FightHandler());
         return button;
     }
+
+    private class FightHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            enemy = generateEnemy(player.getLevel());
+            printEnemy(enemy);
+            menuArea.add(combatButton());
+            refresh();
+        }
+    }
+
+    // EFFECTS: Produce an enemy corresponding to a players level
+    private Character generateEnemy(int level) {
+        // These are enemies that correspond to a player level
+        if (level == 1) {
+            return new Character("Goblin Knight", "goblin", "knight",
+                    10, 10, 10, 10, 10);
+
+        } else if (level == 2) {
+            return new Character("Huntress", "elf", "hunter",
+                    20, 8, 6, 30, 20);
+
+        } else if (level == 3) {
+            return new Character("Lich King", "lich", "wizard",
+                    20, 40, 10, 40, 10);
+
+        } else if (level == 4) {
+            return new Character("Shadow Assassin", "???", "assassin",
+                    30, 40, 10, 40, 40);
+
+        } else {
+            return new Character("Champion of the Arena", "tiefling", "champion",
+                    80, 20, 80, 30, 10);
+        }
+    }
+
+    // EFFECTS: Print out detailed information of an arena enemy.
+    private void printEnemy(Character enemy) {
+        clear();
+        mainTextArea.append("\nYour opponent is...\n");
+        mainTextArea.append(String.format("\n%s the %s %s!\n", enemy.getName(), enemy.getRace(), enemy.getClassName()));
+    }
+
+    private Component combatButton() {
+        JButton button = createMenuButton();
+        button.setText("FIGHT");
+        button.addActionListener(new CombatHandler());
+        return button;
+    }
+
+    private class CombatHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (player.getSpeed() > enemy.getSpeed()) {  // The faster character goes first, else the enemy does
+                attack(player, enemy);
+                updateHeader();
+                if (enemy.isAlive()) {
+                    attack(enemy, player);  // hit back
+                    updateHeader();
+                }
+            } else {
+                attack(enemy, player);
+                updateHeader();
+                if (player.isAlive()) {
+                    attack(player, enemy);  // hit back
+                    updateHeader();
+                }
+            }
+        }
+    }
+
+    // MODIFIES: this
+    //           Character defender by potentially lowering their current HP
+    // EFFECTS: Allow attackers to damage a defender or miss if they have low dexterity
+    private void attack(Character attacker, Character defender) {
+        int chanceToHit = generateRandomInteger(DEXTERITY_ROLL);  // Produce a random number. If DEX > this number
+        // then the attack will hit, or else it misses.
+
+        if (attacker.getDexterity() >= chanceToHit) {  // If attacker DEX is greater than the random number, it hits
+            mainTextArea.append(String.format("%s hits %s.\n", attacker.getName(), defender.getName()));
+            int damage = attacker.getStrength() - defender.getEndurance() / 2;  // Calculate damage (END mitigates some)
+
+            if (damage <= 0) {  // Always deal at least 1 damage if an attack hits
+                defender.takeDamage(1);
+            } else {
+                defender.takeDamage(damage);  // If damage is > 0, deal the full number
+            }
+
+            battleMessage(attacker.getName(), defender.getName(), defender.getCurrentHealth());  // Print results
+
+        } else {
+            mainTextArea.append(String.format(
+                    "%s missed.\n", attacker.getName()));  // Let the player know the attack missed.
+        }
+    }
+
+    // EFFECTS: Print an informative message of the results of a combat attack.
+    private void battleMessage(String attacker, String defender, int defenderHealth) {
+        if (defenderHealth <= 0) {
+            mainTextArea.append(String.format("%s has slain %s.\n", attacker, defender));
+            combatEnd();
+        } else {
+            mainTextArea.append(String.format(
+                    "%s is still alive, with %d health remaining.\n", defender, defenderHealth));
+        }
+    }
+
+    public void combatEnd() {
+        if (player.isAlive()) {
+            clear();
+            levelUpPlayer();
+            fillMenu(menuArea);
+            updateHeader();
+            refresh();
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Your character " + player.getName() + " was killed by " + enemy.getName() + ".\n Game over.");
+            setVisible(false); //you can't see me!
+            dispose();
+        }
+    }
+
+    // MODIFIES: Character
+    // EFFECTS: Increase a character's level by one, and increase their stats once with informative messages.
+    private void levelUpPlayer() {
+        mainTextArea.append("You won the fight! You feel a bit stronger!\n");
+        player.levelUp();
+        if (player.getLevel() > NUMBER_OF_LEVELS) {
+            JOptionPane.showMessageDialog(this,
+                    "You've become the Champion of the Arena! You win!\nThanks for playing!");
+            setVisible(false); //you can't see me!
+            dispose();
+        }
+        player.increaseStats(player.getClassName());
+        mainTextArea.append(String.format(
+                "You are now level %d.\nYour stats have increased, and you gained some gold for winning "
+                + "the fight.\n", player.getLevel()));
+    }
+
+
 
     // EFFECTS: Generate GUI for viewing stats in the JTextArea
     private JButton statsButton() {
@@ -730,7 +872,6 @@ public class Game extends JFrame {
     // EFFECTS: generates the main JTextArea for game information to be displayed
     private void generateTextArea() {
         mainTextArea = new JTextArea("What would you like to do?\n");  // initial text
-//        mainTextArea.setBounds(0, 0, 700, 370);
         mainTextArea.setBounds(50, 50, 700, 370);
 
         mainTextArea.setBackground(Color.BLACK);
@@ -740,8 +881,6 @@ public class Game extends JFrame {
         mainTextArea.setEditable(false);  // we dont want editing
         scrollPane = new JScrollPane(mainTextArea);  // make it so it can scroll and handle overflow
         scrollPane.setBounds(50,50,700,370);
-//        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-//        mainArea.add(mainTextArea);
         scrollBar = scrollPane.getVerticalScrollBar();
         getContentPane().add(scrollPane);
         refresh();
