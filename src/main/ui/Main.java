@@ -9,7 +9,7 @@ import java.io.FileNotFoundException;
 public class Main {
     public static void main(String[] args) {
         try {
-            new ConsoleGame();
+            new Game();
         } catch (FileNotFoundException e) {
             System.out.println("Unable to run application: The application is missing the save file.");
         }
