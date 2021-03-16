@@ -1,14 +1,39 @@
 {
-    "dexterity": 14,
-    "gold": 100,
-    "maxHP": 8,
-    "currentHP": 8,
-    "race": "elf",
-    "strength": 8,
-    "level": 1,
-    "name": "jArjun",
+    "dexterity": 19,
+    "gold": 0,
+    "maxHP": 24,
+    "currentHP": 24,
+    "race": "dwarf",
+    "strength": 24,
+    "level": 5,
+    "name": "jp",
     "className": "merchant",
-    "endurance": 8,
-    "inventory": [],
-    "speed": 12
+    "endurance": 24,
+    "inventory": [
+        {
+            "dexterity": 6,
+            "strength": 4,
+            "name": "demonic dagger",
+            "endurance": 0,
+            "speed": 5,
+            "worth": 100
+        },
+        {
+            "dexterity": 1,
+            "strength": 2,
+            "name": "godly armour",
+            "endurance": 10,
+            "speed": 1,
+            "worth": 100
+        },
+        {
+            "dexterity": 0,
+            "strength": 2,
+            "name": "armour of strength",
+            "endurance": 3,
+            "speed": 0,
+            "worth": 50
+        }
+    ],
+    "speed": 19
 }

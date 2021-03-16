@@ -733,15 +733,15 @@ public class Game extends JFrame {
 
         } else if (level == 3) {
             return new Character("Lich King", "lich", "wizard",
-                    20, 40, 10, 40, 10);
+                    15, 35, 10, 25, 10);
 
         } else if (level == 4) {
-            return new Character("Shadow Assassin", "???", "assassin",
-                    30, 40, 10, 40, 40);
+            return new Character("Bruntus", "cyclops", "barbarian",
+                    50, 5, 30, 40, 40);
 
         } else {
             return new Character("Champion of the Arena", "tiefling", "champion",
-                    80, 20, 80, 30, 10);
+                    80, 20, 40, 30, 10);
         }
     }
 
@@ -749,7 +749,8 @@ public class Game extends JFrame {
     private void printEnemy(Character enemy) {
         clear();
         mainTextArea.append("\nYour opponent is...\n");
-        mainTextArea.append(String.format("\n%s the %s %s!\n", enemy.getName(), enemy.getRace(), enemy.getClassName()));
+        mainTextArea.append(String.format(
+                "\n%s the %s %s!\n\n", enemy.getName(), enemy.getRace(), enemy.getClassName()));
     }
 
     private Component combatButton() {
@@ -825,9 +826,10 @@ public class Game extends JFrame {
             refresh();
         } else {
             JOptionPane.showMessageDialog(this,
-                    "Your character " + player.getName() + " was killed by " + enemy.getName() + ".\n Game over.");
+                    "Your character " + player.getName() + " was killed by " + enemy.getName() + ".\nGame over.");
             setVisible(false);
             dispose();
+            System.exit(0);
         }
     }
 
@@ -841,6 +843,7 @@ public class Game extends JFrame {
                     "You've become the Champion of the Arena! You win!\nThanks for playing!");
             setVisible(false);
             dispose();
+            System.exit(0);
         }
         player.increaseStats(player.getClassName());
         mainTextArea.append(String.format(
@@ -961,9 +964,11 @@ public class Game extends JFrame {
                 saveCharacter();
                 setVisible(false); //you can't see me!
                 dispose();
+                System.exit(0);
             } else if (opt == 1) {
                 setVisible(false); //you can't see me!
                 dispose();
+                System.exit(0);
             }
         }
     }
@@ -1083,24 +1088,12 @@ public class Game extends JFrame {
         refresh();
     }
 
-    private Character getPlayer() {
-        return player;
-    }
-
-    private Character getEnemy() {
-        return enemy;
-    }
-
-    private Inventory getShop() {
-        return shop;
-    }
-
-    public static void main(String[] args) {
-        try {
-            new Game();
-        } catch (FileNotFoundException e) {
-            System.out.println("Unable to run application: The application is missing the save file.");
-        }
-    }
+//    public static void main(String[] args) {
+//        try {
+//            new Game();
+//        } catch (FileNotFoundException e) {
+//            System.out.println("Unable to run application: The application is missing the save file.");
+//        }
+//    }
 
 }
