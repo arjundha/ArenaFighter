@@ -59,7 +59,7 @@ User Story | Completed
 --- | --- 
 As a user, I want to be able to play the game with a GUI | Yes
 As a user, I want to be greeted with a main menu when starting the game | Yes 
-As a user, I want to see an image on the main menu | --- 
+As a user, I want to see an image on the main menu | Yes 
 As a user, I want to be able to start a new game with a button | Yes 
 As a user, I want to be able to quit the game with a button | Yes 
 As a user, I want to be reminded to save the game before I quit | Yes 
@@ -69,7 +69,6 @@ As a user, I want to be able to see the equipment added to my inventory on scree
 As a user, I want to be able to see the detailed stats of my character modified by my inventory on screen | Yes
 As a user, I want the game to close when I lose | Yes
 As a user, I want the game to close when I win | Yes
-As a user, I want to hear a sound when I level up | ---
 
 
 
