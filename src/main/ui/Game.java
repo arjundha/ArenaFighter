@@ -7,22 +7,25 @@ import persistence.JsonReader;
 import persistence.JsonWriter;
 import player.Character;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Random;
 
 /**
  * The Game class is the main handler of gameplay. It requires no parameters, and once a new Game is
- * instantiated it will begin a new game with GUI.
+ * instantiated it will begin a new game with GUI using Java Swing.
  * This class contains methods for printing menus, printing information, handling shopping,
- * handling combat and also for handling user input.
+ * handling combat and also for handling user input through Java Swing.
  *
  * CITATION:
- * To implement the Java Swing, I learned
+ * To implement the Java Swing, I implemented code based off the UBC CPSC 210 DrawEditor as an example.
  *
  * @author Arjun
  */
@@ -42,6 +45,9 @@ public class Game extends JFrame {
     private static final String JSON_SAVE = "./data/save.json";
     private final JsonWriter jsonWriter;
     private final JsonReader jsonReader;
+
+    private static final String LOGO = "./data/logo.png";
+
     private Character player;
     private Character enemy;
 
@@ -88,6 +94,7 @@ public class Game extends JFrame {
     // EFFECTS: initiates the game for the user
     private void startScreen() {
         createTitle();
+        refresh();
     }
 
     // MODIFIES: this
@@ -103,7 +110,28 @@ public class Game extends JFrame {
 
         titlePanel.add(titleLabel);  // add it all to the screen
         generateStartMenu();
+        loadLogo();  // add logo
         getContentPane().add(titlePanel);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: produce a logo image on the main menu
+    private void loadLogo() {
+        try {
+            BufferedImage logo = ImageIO.read(new File(LOGO));  // load the image
+            JLabel picLabel = new JLabel(new ImageIcon(logo));
+            JPanel logoPanel = new JPanel();
+            logoPanel.setBounds(100, 200, 600, 300);  // make the panel where it needs to be
+            logoPanel.add(picLabel);
+            logoPanel.setBackground(BACKGROUND);
+            getContentPane().add(logoPanel);  // add it all
+            refresh();
+
+
+        } catch (IOException e) {
+            System.out.println("Unable to find image at: " + LOGO); // the game should still run if no img
+        }
+
     }
 
     // MODIFIES: this
