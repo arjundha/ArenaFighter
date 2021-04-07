@@ -70,6 +70,25 @@ As a user, I want to be able to see the detailed stats of my character modified 
 As a user, I want the game to close when I lose | Yes
 As a user, I want the game to close when I win | Yes
 
+### Phase 4 - Design
+This phase did not include adding additional features, but instead on modifying the design and 
+structure of the code. It also involved reflecting on the design choices made during the project
+and seeing where any improvements could be made.
+#### Phase 4: Task 2
+For this phase, I chose to make the Inventory class more robust. To do this, I created a new Exception
+called InvalidEquipmentException, and implemented it in two methods in the Inventory class. These methods
+are the getEquipment() and removeEquipment() methods.
+#### Phase 4: Task 3
+It is clear to see that there is a lot of improvement that could be done on my project design if I had more time.
+The Game class is not very cohesive, and has many composition relationships with the Handler classes which is not 
+an ideal design pattern. I would have liked to refactor Game so that some of its responsibilities are handles by 
+separate classes. I also wanted to implement an enumeration to handle some game logic that Game and ConsoleGame 
+currently handles, like enemies and healing. Additionally, I think it would also be a good idea to create a Shop 
+class which could handle the store rather than making Game and ConsoleGame manage it themselves, 
+and the class could have extended Inventory. 
+
+There are clearly many things that I would refactor if I had more time on this project, but I will carry these
+ideas into any projects I make in the future. 
 
 
  
