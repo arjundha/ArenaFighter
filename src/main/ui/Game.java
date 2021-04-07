@@ -1,5 +1,6 @@
 package ui;
 
+import exceptions.InvalidEquipmentException;
 import model.Equipment;
 import model.Inventory;
 import org.json.JSONException;
@@ -383,16 +384,23 @@ public class Game extends JFrame {
             mainTextArea.append("\"Good luck in the arena!\"\n");
         } else {
             for (int i = 0; i < shop.getInventorySize(); i++) {  // Print out each Equipment in an Inventory
-                Equipment item = shop.getEquipment(i);
-                mainTextArea.append(String.format("\n%d. %s: "
-                                + "\nStrength - %d   Endurance - %d   Dexterity - %d   Speed - %d   VALUE: %d\n",
-                        i + 1,
-                        item.getName().substring(0, 1).toUpperCase() + item.getName().substring(1),  // Capitalize name
-                        item.getStrength(),
-                        item.getEndurance(),
-                        item.getDexterity(),
-                        item.getSpeed(),
-                        item.getWorth()));
+                Equipment item;
+                try {
+                    item = shop.getEquipment(i);
+                    mainTextArea.append(String.format("\n%d. %s: "
+                                    + "\nStrength - %d   Endurance - %d   Dexterity - %d   Speed - %d   VALUE: %d\n",
+                            i + 1,
+                            item.getName().substring(0, 1).toUpperCase() + item.getName().substring(1), // Capitalize
+                            item.getStrength(),
+                            item.getEndurance(),
+                            item.getDexterity(),
+                            item.getSpeed(),
+                            item.getWorth()));
+
+                } catch (InvalidEquipmentException e) {
+                    System.out.println("ERR: Inventory item is out of bounds.");
+                }
+
             }
         }
     }
@@ -452,28 +460,40 @@ public class Game extends JFrame {
 
         } else if (0 < item && item <= shop.getInventorySize()) {  // Check if the user input is within the options
             int index = item - 1;  // get the index of the element we want
-            Equipment equipment = shop.getEquipment(index);
-            int cost = equipment.getWorth();  // How much does it cost?
+            Equipment equipment;
+            try {
+                equipment = shop.getEquipment(index);
+                int cost = equipment.getWorth();  // How much does it cost?
 
-            if (player.getGold() >= cost) {  // Can afford it
-                player.equipItem(equipment);  // Add the equipment to your inventory
-                player.spendGold(cost);  // Spend the gold needed to buy the item
-                shop.removeEquipment(index);  // Remove the equipment from the store
-                stock--;  // reduce shop stock by 1
-                menuArea.removeAll(); // reset the menu so you cant buy an item thats gone
-                mainTextArea.setText(null); // reset the text area so its not messy
-                fillShopMenuArea();
-                displayShop();
-                updateHeader();
-                mainTextArea.append(String.format("\nYou buy the %s.\n", equipment.getName()));  // Informative message
+                if (player.getGold() >= cost) {  // Can afford it
+                    exchangeGoldForItem(equipment, cost, index);
 
-            } else {  // Cant afford it
-                mainTextArea.append("Ah, it appears as if you do not have enough gold for that, sorry.\n");
+                } else {  // Cant afford it
+                    mainTextArea.append("Ah, it appears as if you do not have enough gold for that, sorry.\n");
+                }
+
+            } catch (InvalidEquipmentException e) {
+                e.printStackTrace();
             }
 
         } else {
             mainTextArea.append("I don't think I have that in stock...\n");
         }
+    }
+
+    // MODIFIES: this and Character
+    // EFFECTS: Buys an item for the player, if item is not in store inventory, throws InvalidEquipmentException
+    private void exchangeGoldForItem(Equipment equipment, int cost, int index) throws InvalidEquipmentException {
+        player.equipItem(equipment);  // Add the equipment to your inventory
+        player.spendGold(cost);  // Spend the gold needed to buy the item
+        shop.removeEquipment(index);  // Remove the equipment from the store
+        stock--;  // reduce shop stock by 1
+        menuArea.removeAll(); // reset the menu so you cant buy an item thats gone
+        mainTextArea.setText(null); // reset the text area so its not messy
+        fillShopMenuArea();
+        displayShop();
+        updateHeader();
+        mainTextArea.append(String.format("\nYou buy the %s.\n", equipment.getName()));  // Informative message
     }
 
     // EFFECTS: Produce a randomized inventory to be sold in a shop
@@ -632,6 +652,7 @@ public class Game extends JFrame {
         }
     }
 
+    // EFFECTS: Creates a button that can be used to return to the main menu
     private JButton backButton() {
         JButton button = createMenuButton();
         button.setText("4) Back");
@@ -639,6 +660,8 @@ public class Game extends JFrame {
         return button;
     }
 
+    // MODIFIES: this
+    // EFFECTS: Functionality for the backButton
     private class BackHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -738,6 +761,8 @@ public class Game extends JFrame {
         return button;
     }
 
+    // MODIFIES: this
+    // EFFECTS: Functionality for the fightButton
     private class FightHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -781,6 +806,7 @@ public class Game extends JFrame {
                 "\n%s the %s %s!\n\n", enemy.getName(), enemy.getRace(), enemy.getClassName()));
     }
 
+    // EFFECTS: Creates a button used to progress through combat
     private Component combatButton() {
         JButton button = createMenuButton();
         button.setText("FIGHT");
@@ -788,6 +814,8 @@ public class Game extends JFrame {
         return button;
     }
 
+    // MODIFIES: this
+    // EFFECTS: Functionality for the combatButton
     private class CombatHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -845,6 +873,8 @@ public class Game extends JFrame {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: Determine who won at the end of combat
     public void combatEnd() {
         if (player.isAlive()) {
             clear();
@@ -937,24 +967,26 @@ public class Game extends JFrame {
             mainTextArea.append("My inventory is empty.\n");
             scrollDown();
 
-
         } else {
             mainTextArea.append("\nINVENTORY:");
             for (int i = 0; i < inventory.getInventorySize(); i++) {  // Print out each Equipment in an Inventory
-                Equipment item = inventory.getEquipment(i);
-                mainTextArea.append(String.format("\n%d. %s: "
-                                + "\nStrength - %d   Endurance - %d   Dexterity - %d   Speed - %d   VALUE: %d\n",
-                        i + 1,
-                        item.getName().substring(0, 1).toUpperCase() + item.getName().substring(1),  // Capitalize name
-                        item.getStrength(),
-                        item.getEndurance(),
-                        item.getDexterity(),
-                        item.getSpeed(),
-                        item.getWorth()));
-                scrollDown();
+                Equipment item;
+                try {
+                    item = inventory.getEquipment(i);
+                    mainTextArea.append(String.format("\n%d. %s: "
+                                    + "\nStrength - %d   Endurance - %d   Dexterity - %d   Speed - %d   VALUE: %d\n",
+                            i + 1,
+                            item.getName().substring(0, 1).toUpperCase() + item.getName().substring(1),  // Capitalize
+                            item.getStrength(), item.getEndurance(),
+                            item.getDexterity(),
+                            item.getSpeed(),
+                            item.getWorth()));
+                    scrollDown();
+                } catch (InvalidEquipmentException e) {
+                    e.printStackTrace();
+                }
             }
         }
-
     }
 
     // EFFECTS: on press, the player is saved in the JSON

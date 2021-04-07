@@ -1,5 +1,6 @@
 package persistence;
 
+import exceptions.InvalidEquipmentException;
 import model.Equipment;
 import model.Inventory;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,6 +81,8 @@ public class JsonWriterTest extends JsonTest{
 
         } catch (IOException e) {
             fail("Exception should not have been thrown");
+        } catch (InvalidEquipmentException e) {
+            fail("Unexpected InvalidEquipmentException");
         }
     }
 }

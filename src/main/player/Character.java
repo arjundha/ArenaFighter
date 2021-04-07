@@ -1,5 +1,6 @@
 package player;
 
+import exceptions.InvalidEquipmentException;
 import model.Equipment;
 import model.Inventory;
 import org.json.JSONArray;
@@ -258,8 +259,13 @@ public class Character implements Writable {
         JSONArray jsonArray = new JSONArray();
 
         for (int i = 0; i < inventory.getInventorySize(); i++) {
-            Equipment item = inventory.getEquipment(i);
-            jsonArray.put(item.toJson());
+            Equipment item;
+            try {
+                item = inventory.getEquipment(i);
+                jsonArray.put(item.toJson());
+            } catch (InvalidEquipmentException e) {
+                e.printStackTrace();
+            }
         }
         return jsonArray;
     }

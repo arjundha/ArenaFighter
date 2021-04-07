@@ -1,5 +1,6 @@
 package ui;
 
+import exceptions.InvalidEquipmentException;
 import model.Equipment;
 import model.Inventory;
 import org.json.JSONException;
@@ -321,14 +322,18 @@ public class ConsoleGame {
                 System.out.println("\nPlease select a valid option.");
 
             } else {
-                buyItem(player, shopInventory, Integer.parseInt(selection));
+                try {
+                    buyItem(player, shopInventory, Integer.parseInt(selection));
+                } catch (InvalidEquipmentException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
     // MODIFIES: Inventory and Character
     // EFFECTS: Remove an item from a shop inventory and place it in a Character inventory after spending gold
-    private void buyItem(Character character, Inventory shop, int item) {
+    private void buyItem(Character character, Inventory shop, int item) throws InvalidEquipmentException {
         if (shop.getInventorySize() == 0) {  // Check if the inventory is empty
             System.out.println("\nSorry, I am sold out!");
 
@@ -661,16 +666,22 @@ public class ConsoleGame {
             System.out.println("\nMy inventory is empty.");
         } else {
             for (int i = 0; i < inventory.getInventorySize(); i++) {  // Print out each Equipment in an Inventory
-                Equipment item = inventory.getEquipment(i);
-                System.out.printf("\n%d. %s: "
-                                 + "\nStrength - %d   Endurance - %d   Dexterity - %d   Speed - %d   VALUE: %d\n",
-                        i + 1,
-                        item.getName().substring(0, 1).toUpperCase() + item.getName().substring(1),  // Capitalize name
-                        item.getStrength(),
-                        item.getEndurance(),
-                        item.getDexterity(),
-                        item.getSpeed(),
-                        item.getWorth());
+                Equipment item;
+                try {
+                    item = inventory.getEquipment(i);
+                    System.out.printf("\n%d. %s: "
+                                    + "\nStrength - %d   Endurance - %d   Dexterity - %d   Speed - %d   VALUE: %d\n",
+                            i + 1,
+                            item.getName().substring(0, 1).toUpperCase() + item.getName().substring(1), // capitalize
+                            item.getStrength(),
+                            item.getEndurance(),
+                            item.getDexterity(),
+                            item.getSpeed(),
+                            item.getWorth());
+                } catch (InvalidEquipmentException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
 

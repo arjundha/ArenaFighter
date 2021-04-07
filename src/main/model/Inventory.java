@@ -1,7 +1,8 @@
 package model;
 
+import exceptions.InvalidEquipmentException;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,10 +23,14 @@ public class Inventory {
         this.equipment = new ArrayList<>();
     }
 
-    // REQUIRES: 0 <= index < this.equipment.size()
-    // EFFECTS: produce a specific equipment at a specified index
-    public Equipment getEquipment(int index) {
-        return this.equipment.get(index);
+
+    // EFFECTS: produce a specific equipment at a specified index, else throws InvalidEquipmentException if unable to
+    public Equipment getEquipment(int index) throws InvalidEquipmentException {
+        if (0 <= index && index < getInventorySize()) {
+            return this.equipment.get(index);
+        } else {
+            throw new InvalidEquipmentException("That equipment is out of bounds.");
+        }
     }
 
     // EFFECTS: produce the total strength modification value from elements in the Inventory
@@ -75,11 +80,14 @@ public class Inventory {
         this.equipment.add(item);
     }
 
-    // REQUIRES: 0 <= index < this.equipment.size()
     // MODIFIES: this
-    // EFFECTS: remove an equipment from an Inventory
-    public void removeEquipment(int index) {
-        this.equipment.remove(index);
+    // EFFECTS: remove an equipment from an Inventory if it is in the Inventory, else throw InvalidEquipmentException
+    public void removeEquipment(int index) throws InvalidEquipmentException {
+        if (0 <= index && index < getInventorySize()) {
+            this.equipment.remove(index);
+        } else {
+            throw new InvalidEquipmentException("That equipment is out of bounds.");
+        }
     }
 
 

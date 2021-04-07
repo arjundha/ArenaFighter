@@ -1,5 +1,6 @@
 package persistence;
 
+import exceptions.InvalidEquipmentException;
 import model.Inventory;
 import org.junit.jupiter.api.Test;
 import player.Character;
@@ -66,6 +67,8 @@ public class JsonReaderTest extends JsonTest{
 
         } catch (IOException e) {
             fail("Couldn't read from file");
+        } catch (InvalidEquipmentException e) {
+            fail("Unexpected InvalidEquipmentException");
         }
     }
 }
