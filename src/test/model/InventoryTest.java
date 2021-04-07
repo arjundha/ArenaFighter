@@ -41,10 +41,21 @@ class InventoryTest {
     }
 
     @Test
-    void testInventoryRemoveEquipmentThrowError() {
+    void testInventoryRemoveEquipmentNumberLargerThanSize() {
         assertEquals(1, testInventoryWithEquipment.getInventorySize());
         try {
             testInventoryWithEquipment.removeEquipment(1);
+            fail("Uncaught InvalidEquipmentException");
+        } catch (InvalidEquipmentException e) {
+            // expected
+        }
+    }
+
+    @Test
+    void testInventoryRemoveEquipmentNegativeNumber() {
+        assertEquals(1, testInventoryWithEquipment.getInventorySize());
+        try {
+            testInventoryWithEquipment.removeEquipment(-1);
             fail("Uncaught InvalidEquipmentException");
         } catch (InvalidEquipmentException e) {
             // expected
@@ -68,14 +79,23 @@ class InventoryTest {
     }
 
     @Test
-    void testGetEquipmentThrowError() {
+    void testGetEquipmentNumberLargerThanSize() {
         try {
             testEquipment = testInventoryWithEquipment.getEquipment(1);
             fail("Uncaught InvalidEquipmentException");
         } catch (InvalidEquipmentException e) {
             // expected
         }
+    }
 
+    @Test
+    void testGetEquipmentNegativeNumber() {
+        try {
+            testEquipment = testInventoryWithEquipment.getEquipment(-1);
+            fail("Uncaught InvalidEquipmentException");
+        } catch (InvalidEquipmentException e) {
+            // expected
+        }
     }
 
     @Test
