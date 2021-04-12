@@ -1,7 +1,7 @@
-# Champion of the Arena
+# Arena Fighter
 
-## What is "Champion of the Arena"?
-Champion of the Arena is a game developed in Java where players create their own custom character
+## What is "Arena Fighter"?
+Arena Fighter is a game developed in Java where players create their own custom character
 who will fight battle after battle in order to become champion of the arena. Players will be able
 to choose their character's:
 
